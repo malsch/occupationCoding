@@ -1,0 +1,29 @@
+Package: occupationCoding
+Type: Package
+Title: Supervised Learning for Occupation Coding
+Version: 0.1.0
+Author: Malte Schierholz <malte.schierholz@iab.de>
+Maintainer: Malte Schierholz <malte.schierholz@iab.de>
+Description: Occupation Coding refers to coding short verbal texts (survey answers)
+    into an occupational classification. This package implements several supervised learning
+    techniques to simplify its automation. More details can be found in an upcoming publication.
+    See predict-functions for some examples of what this package can do.
+License: GPL-3
+LazyData: TRUE
+RoxygenNote: 6.0.1
+Encoding: UTF-8
+LazyData: true
+IMPORTS:
+    text2vec (== 0.4.0),
+    tm (== 0.6-2),
+    stringr,
+    ggplot2
+SUGGESTS:
+    glmnet,
+    xgboost,
+    SnowballC,
+    mvtnorm,
+    stringdist,
+    Matrix,
+    parallel,
+    readxl
