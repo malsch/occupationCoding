@@ -24,7 +24,7 @@ createSimilarityTableWordwiseStringdist(unique.string,
   \item{removePunct}{\code{TRUE} if \code{\link[tm]{removePunctuation}} shall be used.}
 }}
 
-\item{dist.control}{a list that will be passed to \code{\link[stringdist]{stringdistmatrix}}. Currently only two elements are implemented:
+\item{dist.control}{a list that will be passed to \code{\link[stringdist:stringdist]{stringdistmatrix}}. Currently only two elements are implemented:
 \describe{
   \item{method}{Method for distance calculation.}
   \item{weight}{For method='osa' or 'dl'.}
