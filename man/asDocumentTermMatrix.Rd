@@ -47,5 +47,5 @@ asDocumentTermMatrix(x, vect.vocab = dtm$vect.vocab, stopwords = character(0), s
 }
 \seealso{
 \url{http://text2vec.org/vectorization.html} for details on the implementation used here,
-another implementation \code{\link[tm]{TermDocumentMatrix}} is slower
+another implementation \code{\link[tm:TermDocumentMatrix]{TermDocumentMatrix}} is slower
 }
