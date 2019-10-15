@@ -11,7 +11,7 @@ asDocumentTermMatrix(input, vect.vocab = NULL,
 \arguments{
 \item{input}{a character vector.}
 
-\item{vect.vocab}{a vocabulary created with \code{\link[text2vec]{vocab_vectorizer}}. If \code{NULL}, the vocabulary is created from the input. See example for a typical use case.}
+\item{vect.vocab}{a vocabulary created with \code{\link[text2vec:vectorizers]{vocab_vectorizer}}. If \code{NULL}, the vocabulary is created from the input. See example for a typical use case.}
 
 \item{stopwords}{character vector of stopwords to exclude when creating the vocabulary. \code{tm::stopwords("de")} provides German stopwords.}
 
@@ -47,5 +47,5 @@ asDocumentTermMatrix(x, vect.vocab = dtm$vect.vocab, stopwords = character(0), s
 }
 \seealso{
 \url{http://text2vec.org/vectorization.html} for details on the implementation used here,
-another implementation \code{\link[tm]{DocumentTermMatrix}} is slower
+another implementation \code{\link[tm]{TermDocumentMatrix}} is slower
 }
