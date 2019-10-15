@@ -2,7 +2,9 @@
 
 This is an R package for occupation coding. It accompanies the following publication:
 
-Don't expect that this package will solve your problem. You will probably need to do some programming to make this package suit your application.
+(not yet published)
+
+Don't expect that this package will solve your problem without effort. You will probably need to do some programming to make this package suit your application.
 
 ## Installation
 
