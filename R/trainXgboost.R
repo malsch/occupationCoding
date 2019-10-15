@@ -8,6 +8,11 @@
 #' @param allowed.codes a vector containg all the labels of the codes (even those that are not in the data are possible.)
 #' @param testCases If \code{NULL} (default) the model is trained as usual. If \code{testCases} is a logical vector equal to the length of \code{data}, the function splits data into a separate evaluation set (the elements with \code{testCases == TRUE}), prints missclassification error of training and evaluation dataset and returns the predictions from the evaluation dataset.
 #' @param returnPredictions (only used if testCases are given.) If TRUE, a data.table with predictions for all testCases is returned. Otherwise the xgboost model is returned which can be used for diagnostics but not inside \code{\link{predictXgboost}} because the term-document matrix will be calculated in a different way.
+#' @param coding_index a data.table with columns
+#' \describe{
+#'   \item{title}{a character vector, a preprocessed character vector with entries from the coding index.}
+#'   \item{Code}{a character vector with associated classification codes.}
+#' }
 #' @param preprocessing a list with elements
 #' \describe{
 #'   \item{stopwords}{a character vector, use \code{tm::stopwords("de")} for German stopwords.}
@@ -75,7 +80,24 @@
 #'                                     early.stopping.max.diff = n.test / 100, early.stopping.precision.digits = 3,
 #'                                     nthread = 8, verbose=0)
 #'                       )
+#'
+#' # same as before, now using the coding index
+#' # point path_to_file to your local file
+#' # path_to_file <- ".../Gesamtberufsliste_der_BA.xlsx"
+#' # coding_index_excerpt <- prepare_German_coding_index_Gesamtberufsliste_der_BA(path_to_file, count.categories = FALSE)
+#' XGboostModel <- trainXgboost(proc.occupations, allowed.codes = allowed.codes, testCases = NULL, returnPredictions = FALSE,
+#'                       coding_index = coding_index_excerpt,
+#'                       preprocessing = list(stopwords = tm::stopwords("de"), stemming = "de", countWords = FALSE),
+#'                       tuning = list(eta = 0.5, lambda = 1e-4, alpha = 0,
+#'                                     max.depth = 20, gamma = 0.6,
+#'                                     min_child_weight = 0, max_delta_step = 1,
+#'                                     subsample = 0.75, colsample_bytree = 1, colsample_bylevel=1,
+#'                                     nrounds= 3, early_stopping_rounds = NULL,
+#'                                     early.stopping.max.diff = n.test / 100, early.stopping.precision.digits = 3,
+#'                                     nthread = 8, verbose=0)
+#'                       )
 trainXgboost <- function(data, allowed.codes, testCases = NULL, returnPredictions = FALSE,
+                         coding_index = NULL,
                          preprocessing = list(stopwords = character(0), stemming = "de", countWords = TRUE),
                          tuning = list(eta = 0.5, lambda = 1e-4, alpha = 0,
                                        max.depth = 20, gamma = 0.6,
@@ -91,8 +113,21 @@ trainXgboost <- function(data, allowed.codes, testCases = NULL, returnPrediction
          call. = FALSE)
   }
 
+  # add job titles from the coding index to the training data
+  if (!is.null(coding_index)) {
+    coding_index <- rbind(coding_index[, list(title = bezMale, code = Code, origin = "codingIndex")],
+                          coding_index[, list(title = bezFemale, code = Code, origin = "codingIndex")])
+
+    data <- rbind(data[, list(ans, code = as.character(code), origin = "training")],
+                  coding_index[, list(ans = title, code, origin)])
+
+    # our training data set increases in size -> make sure the new cases are not considered as test data
+    if (!is.null(testCases)) testCases <- c(testCases, rep(FALSE, nrow(coding_index)))
+  }
+
+
   # and prepare codes
-  outcome <- factor(as.character(data[,code]), levels = allowed.codes)
+  outcome <- factor(as.character(data[,code]), levels = unique(c(allowed.codes, as.character(data[,code])))) # include data[,code] because this may contain new codes from the coding index
   outcome_dictionary <- data.table(num = 0:(nlevels(outcome) - 1), cat = levels(outcome))
 
   # preprocessing
@@ -108,6 +143,11 @@ trainXgboost <- function(data, allowed.codes, testCases = NULL, returnPrediction
   if (preprocessing$countWords) {
     ans_freq <- sapply(strsplit(ans, " "), length)
     matrix$dtm <- cbind(matrix$dtm, ans_freq)
+  }
+
+  # include feature for origin of training data (0 if training, 1 if coding index)
+  if (!is.null(coding_index)) {
+    matrix$dtm <- cbind(matrix$dtm, origin = ifelse(data[, origin] == "training", 0, 1))
   }
 
   if (is.null(testCases)) { # standard if we want a model
@@ -215,5 +255,6 @@ trainXgboost <- function(data, allowed.codes, testCases = NULL, returnPrediction
   fit$vect.vocab <- matrix$vect.vocab
   fit$trainingEmptyColumns <- trainingEmptyColumns # in case we used a training process with test data and early stopping
   fit$preprocessing <- preprocessing
+  fit$coding_index <- coding_index # we won't need this because it is already in the training data
   return(fit)
 }

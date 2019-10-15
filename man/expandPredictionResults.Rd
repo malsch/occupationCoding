@@ -4,7 +4,8 @@
 \alias{expandPredictionResults}
 \title{Expands predicted datasets to contain all allowed codes}
 \usage{
-expandPredictionResults(occupationalPredictions, allowed.codes, method.name)
+expandPredictionResults(occupationalPredictions, allowed.codes,
+  method.name)
 }
 \arguments{
 \item{allowed.codes}{a character vector of all allowed codes.}

@@ -6,11 +6,12 @@
 \usage{
 trainSimilarityBasedReasoning(data, coding_index_w_codes,
   coding_index_without_codes, preprocessing = list(stopwords =
-  tm::stopwords("de"), stemming = NULL, strPreprocessing = TRUE, removePunct =
-  FALSE), dist.type = c("wordwise", "substring", "fulltext"),
-  dist.control = list(method = "osa", weight = c(d = 1, i = 1, s = 1, t = 1)),
-  threshold = c(max = 3, use = 1), simulation.control = list(n.draws = 250,
-  check.normality = FALSE), tmp_folder = "similarityTables")
+  tm::stopwords("de"), stemming = NULL, strPreprocessing = TRUE,
+  removePunct = FALSE), dist.type = c("wordwise", "substring",
+  "fulltext"), dist.control = list(method = "osa", weight = c(d = 1, i =
+  1, s = 1, t = 1)), threshold = c(max = 3, use = 1),
+  simulation.control = list(n.draws = 250, check.normality = FALSE),
+  tmp_folder = "similarityTables")
 }
 \arguments{
 \item{data}{a data.table created with \code{\link{removeFaultyAndUncodableAnswers_And_PrepareForAnalysis}}}

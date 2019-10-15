@@ -4,8 +4,8 @@
 \alias{predictCreecysMemoryBasedReasoning}
 \title{Predict codes with Creecys Memory-based reaoning model}
 \usage{
-predictCreecysMemoryBasedReasoning(model, newdata, tuning = list(k.neighbors =
-  12, metric = c("SUM", "ERROR", "MAX")))
+predictCreecysMemoryBasedReasoning(model, newdata,
+  tuning = list(k.neighbors = 12, metric = c("SUM", "ERROR", "MAX")))
 }
 \arguments{
 \item{model}{the output created from \code{\link{trainCreecysMemoryBasedReasoning}}}

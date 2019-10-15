@@ -5,8 +5,8 @@
 \title{Trains Gweons Nearest Neighbor model}
 \usage{
 trainGweonsNearestNeighbor(data, preprocessing = list(stopwords =
-  tm::stopwords("de"), stemming = "de", strPreprocessing = FALSE, removePunct =
-  TRUE))
+  tm::stopwords("de"), stemming = "de", strPreprocessing = FALSE,
+  removePunct = TRUE))
 }
 \arguments{
 \item{data}{a data.table created with \code{\link{removeFaultyAndUncodableAnswers_And_PrepareForAnalysis}}}

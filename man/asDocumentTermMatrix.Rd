@@ -4,8 +4,9 @@
 \alias{asDocumentTermMatrix}
 \title{Document-Term Matrix}
 \usage{
-asDocumentTermMatrix(input, vect.vocab = NULL, stopwords = character(0),
-  stemming = NULL, type = c("dgCMatrix", "dgTMatrix", "lda_c"))
+asDocumentTermMatrix(input, vect.vocab = NULL,
+  stopwords = character(0), stemming = NULL, type = c("dgCMatrix",
+  "dgTMatrix", "lda_c"))
 }
 \arguments{
 \item{input}{a character vector.}

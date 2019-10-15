@@ -168,6 +168,11 @@ predictXgboost <- function(model, newdata, add.impossible.codes = NULL) {
     matrix <- cbind(matrix, ans_freq)
   }
 
+  # include feature for origin
+  if (!is.null(model$coding_index)) {
+    matrix <- cbind(matrix, origin = 0)
+  }
+
   if (is.null(model$trainingEmptyColumns)) {
     dTest <- xgboost::xgb.DMatrix(data = matrix)
   } else {

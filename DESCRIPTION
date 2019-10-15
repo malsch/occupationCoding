@@ -9,8 +9,7 @@ Description: Occupation Coding refers to coding short verbal texts (survey answe
     techniques to simplify its automation. More details can be found in an upcoming publication.
     See predict-functions for some examples of what this package can do.
 License: GPL-3
-LazyData: TRUE
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
 Encoding: UTF-8
 LazyData: true
 IMPORTS:

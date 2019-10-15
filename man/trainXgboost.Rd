@@ -5,13 +5,14 @@
 \title{Train an extreme gradient boosted tree model}
 \usage{
 trainXgboost(data, allowed.codes, testCases = NULL,
-  returnPredictions = FALSE, preprocessing = list(stopwords = character(0),
-  stemming = "de", countWords = TRUE), tuning = list(eta = 0.5, lambda =
-  1e-04, alpha = 0, max.depth = 20, gamma = 0.6, min_child_weight = 0,
-  max_delta_step = 1, subsample = 0.75, colsample_bytree = 1, colsample_bylevel
-  = 1, nrounds = 40, early_stopping_rounds = 1, early.stopping.max.diff =
-  sum(testCases)/100, early.stopping.precision.digits = 3, nthread = 1, verbose
-  = 1))
+  returnPredictions = FALSE, coding_index = NULL,
+  preprocessing = list(stopwords = character(0), stemming = "de",
+  countWords = TRUE), tuning = list(eta = 0.5, lambda = 1e-04, alpha = 0,
+  max.depth = 20, gamma = 0.6, min_child_weight = 0, max_delta_step = 1,
+  subsample = 0.75, colsample_bytree = 1, colsample_bylevel = 1, nrounds =
+  40, early_stopping_rounds = 1, early.stopping.max.diff =
+  sum(testCases)/100, early.stopping.precision.digits = 3, nthread = 1,
+  verbose = 1))
 }
 \arguments{
 \item{data}{a data.table created with \code{\link{removeFaultyAndUncodableAnswers_And_PrepareForAnalysis}}}
@@ -21,6 +22,12 @@ trainXgboost(data, allowed.codes, testCases = NULL,
 \item{testCases}{If \code{NULL} (default) the model is trained as usual. If \code{testCases} is a logical vector equal to the length of \code{data}, the function splits data into a separate evaluation set (the elements with \code{testCases == TRUE}), prints missclassification error of training and evaluation dataset and returns the predictions from the evaluation dataset.}
 
 \item{returnPredictions}{(only used if testCases are given.) If TRUE, a data.table with predictions for all testCases is returned. Otherwise the xgboost model is returned which can be used for diagnostics but not inside \code{\link{predictXgboost}} because the term-document matrix will be calculated in a different way.}
+
+\item{coding_index}{a data.table with columns
+\describe{
+  \item{title}{a character vector, a preprocessed character vector with entries from the coding index.}
+  \item{Code}{a character vector with associated classification codes.}
+}}
 
 \item{preprocessing}{a list with elements
 \describe{
@@ -84,6 +91,22 @@ XGboostModel <- trainXgboost(proc.occupations, allowed.codes = allowed.codes, te
 
 # same as before, but without test data and without early stopping (not recommended because results can be worse)
 XGboostModel <- trainXgboost(proc.occupations, allowed.codes = allowed.codes, testCases = NULL, returnPredictions = FALSE,
+                      preprocessing = list(stopwords = tm::stopwords("de"), stemming = "de", countWords = FALSE),
+                      tuning = list(eta = 0.5, lambda = 1e-4, alpha = 0,
+                                    max.depth = 20, gamma = 0.6,
+                                    min_child_weight = 0, max_delta_step = 1,
+                                    subsample = 0.75, colsample_bytree = 1, colsample_bylevel=1,
+                                    nrounds= 3, early_stopping_rounds = NULL,
+                                    early.stopping.max.diff = n.test / 100, early.stopping.precision.digits = 3,
+                                    nthread = 8, verbose=0)
+                      )
+
+# same as before, now using the coding index
+# point path_to_file to your local file
+# path_to_file <- ".../Gesamtberufsliste_der_BA.xlsx"
+# coding_index_excerpt <- prepare_German_coding_index_Gesamtberufsliste_der_BA(path_to_file, count.categories = FALSE)
+XGboostModel <- trainXgboost(proc.occupations, allowed.codes = allowed.codes, testCases = NULL, returnPredictions = FALSE,
+                      coding_index = coding_index_excerpt,
                       preprocessing = list(stopwords = tm::stopwords("de"), stemming = "de", countWords = FALSE),
                       tuning = list(eta = 0.5, lambda = 1e-4, alpha = 0,
                                     max.depth = 20, gamma = 0.6,
