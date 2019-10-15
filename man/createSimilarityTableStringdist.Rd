@@ -15,7 +15,7 @@ createSimilarityTableStringdist(unique.string, coding_index_w_codes,
 
 \item{coding_index_without_codes}{a character vector of additional titles}
 
-\item{dist.control}{a list that will be passed to \code{\link[stringdist]{stringdistmatrix}}. Currently only two elements are implemented:
+\item{dist.control}{a list that will be passed to \code{\link[stringdist:stringdist]{stringdistmatrix}}. Currently only two elements are implemented:
 \describe{
   \item{method}{Method for distance calculation.}
   \item{weight}{For method='osa' or 'dl'.}
