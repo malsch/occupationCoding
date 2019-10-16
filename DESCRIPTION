@@ -16,7 +16,8 @@ IMPORTS:
     text2vec (== 0.4.0),
     tm (== 0.6-2),
     stringr,
-    ggplot2
+    ggplot2,
+    data.table
 SUGGESTS:
     glmnet,
     xgboost,
