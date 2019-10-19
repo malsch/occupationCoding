@@ -6,7 +6,7 @@
 #'
 #' @param model the output created from \code{\link{trainLogisticRegressionWithPenalization}}
 #' @param newdata eiter a data.table created with \code{\link{removeFaultyAndUncodableAnswers_And_PrepareForAnalysis}} or a character vector
-#' @param lambda see \code{\link{glmnet::glmnet}}
+#' @param lambda see \code{\link[glmnet]{glmnet}}
 #'
 #' @seealso \code{\link{trainLogisticRegressionWithPenalization}}, \code{\link[glmnet]{glmnet}}
 #'

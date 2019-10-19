@@ -4,6 +4,8 @@
 #'
 #' Sharpness is zero (optimal) if a single category is predicted with probability 1. It is maximal if all categories have equal probability \eqn{p = \frac{1}{K}}
 #'
+#' Note: What should be done if a predicted probability is zero? \eqn{0 \times log(0)} is not defined but necessary to calculate sharpness. We set {0 \times log(0) = 0}. This also means we exclude observations from our analysis if all probabilities are predicted as zero. An alternative could be to set such zeros to \eqn{1/k)}, which would lead to very different sharpness.
+#'
 #' @param occupationalPredictions a data.table created with a \code{\link{expandPredictionResults}}-function from this package.
 #'
 #' @seealso \code{\link{plotReliabilityDiagram}}, \code{link{logLoss}}
@@ -45,8 +47,6 @@ sharpness <- function(occupationalPredictions) {
     stop("'occupationalPredictionsComplete' needs to have class 'occupationalPredictionsComplete' (=constructed with a expandPredictionResults method).")
   }
 
-  print("Think again about: It makes a huge difference if we exclude a person because all pred.prob are zero. First term calculates sum(entropy) for 155 persons, 429.8925 is the sum(entropy) over 909 persons. (-log2(1/1288)*155 + 429.8925 )/ 1064")
-  print("Sharpness does not depend on k")
   # we set 0 * log_2 0 = 0  (implemented as pred.prob > 0)
   occupationalPredictions[pred.prob > 0, list(entropy = sum(-pred.prob * log2(pred.prob))), by = list(id, method.name)][, list(.N, sharpness = mean(entropy), se = sqrt(var(entropy) / .N)), by = method.name]
   # res.complete[, list(entropy = sum(-pred.prob * log2(pred.prob))), by = list(id, sim.name)][, list(sharpness = mean(entropy), se = sqrt(var(entropy) / .N)), by = sim.name]

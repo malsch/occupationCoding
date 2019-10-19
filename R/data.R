@@ -31,7 +31,7 @@
 #'   \item{count_categories}{An indicator of job title ambiguity. Only used within function \code{\link{predictWithCodingIndex}}}
 #' }
 #' @source
-#' Bundesagentur für Arbeit (2019). Gesamtberufsliste der Bundesagentur für Arbeit. Stand: 03.01.2019. The \code{Gesamtberufsliste der BA} is available at \link{https://download-portal.arbeitsagentur.de/files/}.
+#' Bundesagentur für Arbeit (2019). Gesamtberufsliste der Bundesagentur für Arbeit. Stand: 03.01.2019. The \code{Gesamtberufsliste der BA} is available at \url{https://download-portal.arbeitsagentur.de/files/}.
 #'
 #' The function \code{\link{prepare_German_coding_index_Gesamtberufsliste_der_BA}} was used to process the downloaded \code{.xlsx}-file and prepare this coding index. The resulting coding index has 27853 rows. We selected 90 rows that are related to the \code{\link{occupations}} dataset.
 #'

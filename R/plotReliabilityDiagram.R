@@ -47,7 +47,7 @@ plotReliabilityDiagram <- function(occupationalPredictions, k, num.codes, filena
   # same as calcAccurateAmongTopK but we also keep among.suggested.code == FALSE
   occupationalPredictionsAmongTopK <- occupationalPredictions[, head(.SD[order(pred.prob, decreasing = TRUE), list(pred.prob, acc = code == pred.code)], k), by = list(id, method.name)][, list(pred.prob = sum(pred.prob), acc = sum(acc)), by = list(id, method.name)]
 
-  print("Make sure the following is the size of your test data.")
+  print("Make sure the following is the size of your test data (otherwise an error happened).")
   print(occupationalPredictionsAmongTopK[, .N, by = method.name])
 
   # calculate coordinates to plot

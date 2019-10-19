@@ -12,7 +12,7 @@ predictLogisticRegressionWithPenalization(model, newdata,
 
 \item{newdata}{eiter a data.table created with \code{\link{removeFaultyAndUncodableAnswers_And_PrepareForAnalysis}} or a character vector}
 
-\item{lambda}{see \code{\link[glmnet:glmnet]{glmnet}}}
+\item{lambda}{see \code{\link[glmnet]{glmnet}}}
 }
 \value{
 a data.table of class \code{occupationalPredictions} that contains predicted probabilities \code{pred.prob} for every combination of \code{ans} and \code{pred.code}. pred.code may not cover the full set of possible codes.

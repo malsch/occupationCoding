@@ -10,7 +10,7 @@
 #' @param unique.string a character vector (usually unique(answer))
 #' @param coding_index_w_codes a data.table with columns "title" and "Code".
 #' @param coding_index_without_codes a character vector of additional titles
-#' @param dist.control a list that will be passed to \code{\link[stringdist]{stringdistmatrix}}. Currently only two elements are implemented:
+#' @param dist.control a list that will be passed to \code{\link[stringdist:stringdist]{stringdistmatrix}}. Currently only two elements are implemented:
 #' \describe{
 #'   \item{method}{Method for distance calculation.}
 #'   \item{weight}{For method='osa' or 'dl'.}

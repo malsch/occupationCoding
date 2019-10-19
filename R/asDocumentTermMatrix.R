@@ -3,7 +3,7 @@
 #' Constructs a document-term matrix.
 #'
 #' @param input a character vector.
-#' @param vect.vocab a vocabulary created with \code{\link[text2vec]{vocab_vectorizer}}. If \code{NULL}, the vocabulary is created from the input. See example for a typical use case.
+#' @param vect.vocab a vocabulary created with \code{\link[text2vec:vectorizers]{vocab_vectorizer}}. If \code{NULL}, the vocabulary is created from the input. See example for a typical use case.
 #' @param stopwords character vector of stopwords to exclude when creating the vocabulary. \code{tm::stopwords("de")} provides German stopwords.
 #' @param stemming \code{NULL} for no stemming and \code{"de"} for stemming using the German porter stemmer.
 #' @param type character, one of c("dgCMatrix", "dgTMatrix", "lda_c") taken from \code{\link[text2vec]{create_dtm}}. \code{dgCMatrix} are useful for glmnet; \code{dgTMatrix} matrix refers to sparse matrices in triplet form, i.e. positions of all non-zero values are stored (easier to work with, but non-unique).
@@ -16,7 +16,7 @@
 #'
 #' @seealso
 #' \url{http://text2vec.org/vectorization.html} for details on the implementation used here,
-#' another implementation \code{\link[tm]{DocumentTermMatrix}} is slower
+#' another implementation \code{\link[tm]{TermDocumentMatrix}} is slower
 #'
 #' @export
 #'

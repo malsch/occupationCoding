@@ -18,7 +18,7 @@
 #'   \item{strPreprocessing}{\code{TRUE} if \code{\link{stringPreprocessing}} shall be used.}
 #'   \item{removePunct}{\code{TRUE} if \code{\link[tm]{removePunctuation}} shall be used.}
 #' }
-#' @param dist.control a list that will be passed to \code{\link[stringdist]{stringdistmatrix}}. Currently only two elements are implemented:
+#' @param dist.control a list that will be passed to \code{\link[stringdist:stringdist]{stringdistmatrix}}. Currently only two elements are implemented:
 #' \describe{
 #'   \item{method}{Method for distance calculation.}
 #'   \item{weight}{For method='osa' or 'dl'.}
