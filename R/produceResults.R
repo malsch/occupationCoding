@@ -59,17 +59,22 @@ produceResults <- function(occupationalPredictions, k = 1, n, num.codes) {
 
   accurateAmong <- calcAccurateAmongTopK(occupationalPredictions, k = k)
 
+  print("## Agreement Rate (at 100% production rate):")
   print(accuracy(accurateAmong, n = n))
 
+  print("## Plot Reliability Diagram")
   print(plotReliabilityDiagram(occupationalPredictions, k = k, num.codes = num.codes))
 
+  print("## Sharpness:")
   print(sharpness(occupationalPredictions))
 
+  print("## Log2 loss:")
   print(logLoss(occupationalPredictions))
 
-
+  print("## Plot True Positives vs False Positives")
   print(plotTruePositivesVsFalsePositives(accurateAmong))
 
+  print("## Plot Agreement Rate vs Production Rate")
   print(plotAgreementRateVsProductionRate(accurateAmong, n = n, yintercept = 0.85))
 
   # calculate AUC (I don't like ROC because the number of positive conditions (used in the tpr/recall) is not meaningful as a denominator here)
