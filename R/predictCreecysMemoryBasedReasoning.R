@@ -44,7 +44,7 @@
 #'
 #' # Analyize predictions
 #' accuracy(resMem[, list(pred.code, pred.prob = confidence.score, acc = pred.code == code, num.suggested.codes = 1, num.suggested = 1, general.among.top5 = pred.code == "-9999", method.name = "Creecy.Sum.12")], n = n.test)
-#' plotTruePositivesVsFalsePositives(resMem[, list(pred.code, pred.prob = confidence.score, acc = pred.code == code, num.suggested.codes = 1, num.suggested = 1, general.among.top5 = pred.code == "-9999", method.name = "Creecy.Sum.12")])
+#' plotTruePredictionsVsFalsePredictions(resMem[, list(pred.code, pred.prob = confidence.score, acc = pred.code == code, num.suggested.codes = 1, num.suggested = 1, general.among.top5 = pred.code == "-9999", method.name = "Creecy.Sum.12")])
 #' plotAgreementRateVsProductionRate(resMem[, list(pred.code, pred.prob = confidence.score, acc = pred.code == code, num.suggested.codes = 1, num.suggested = 1, general.among.top5 = pred.code == "-9999", method.name = "Creecy.Sum.12")], n = n.test, yintercept = 0.85)
 #'
 #' #' #######################################################

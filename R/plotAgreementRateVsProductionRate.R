@@ -7,7 +7,7 @@
 #' @param yintercept Where to draw a horizontal line?
 #' @param filename If a \code{filename} is specified the diagram will be saved at with this name.
 #'
-#' @seealso \code{\link{plotTruePositivesVsFalsePositives}}, \code{\link{calcAccurateAmongTopK}}
+#' @seealso \code{\link{plotTruePredictionsVsFalsePredictions}}, \code{\link{calcAccurateAmongTopK}}
 #'
 #' @return a ggplot
 #' @import data.table

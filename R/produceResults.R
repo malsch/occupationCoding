@@ -1,6 +1,6 @@
 #' Produces summaries of predictive performance
 #'
-#' Produces \code{\link{accuracy}}, \code{\link{plotReliabilityDiagram}}, \code{\link{sharpness}}, \code{\link{logLoss}}, \code{\link{plotTruePositivesVsFalsePositives}}, and \code{\link{plotAgreementRateVsProductionRate}}.
+#' Produces \code{\link{accuracy}}, \code{\link{plotReliabilityDiagram}}, \code{\link{sharpness}}, \code{\link{logLoss}}, \code{\link{plotTruePredictionsVsFalsePredictions}}, and \code{\link{plotAgreementRateVsProductionRate}}.
 #'
 #' @param occupationalPredictions a data.table created with a \code{\link{expandPredictionResults}}-function from this package.
 #' @param k how many top k categories to aggregate over?
@@ -71,8 +71,8 @@ produceResults <- function(occupationalPredictions, k = 1, n, num.codes) {
   print("## Log2 loss:")
   print(logLoss(occupationalPredictions))
 
-  print("## Plot True Positives vs False Positives")
-  print(plotTruePositivesVsFalsePositives(accurateAmong))
+  print("## Plot True Predictions vs False Predictions")
+  print(plotTruePredictionsVsFalsePredictions(accurateAmong))
 
   print("## Plot Agreement Rate vs Production Rate")
   print(plotAgreementRateVsProductionRate(accurateAmong, n = n, yintercept = 0.85))
