@@ -2,7 +2,7 @@
 
 This is an R package for occupation coding. It accompanies the following publication:
 
-(not yet published)
+Malte Schierholz, Matthias Schonlau (forthcoming): Machine Learning for Occupation Coding — a Comparison Study, Journal of Survey Statistics and Methodology, https://doi.org/10.1093/jssam/smaa023
 
 Don't expect that this package will solve your problem without effort. You will probably need to do some programming to make this package suit your application.
 
