@@ -4,9 +4,13 @@
 \alias{selectMaxProbMethod}
 \title{From multiple prediction methods, select the prediction method for each id which returns highest probability}
 \usage{
-selectMaxProbMethod(occupationalPredictions,
+selectMaxProbMethod(
+  occupationalPredictions,
   combined.methods = c("xgboost", "SimilarityBasedSubstring",
-  "SimilarityBasedWordwise"), k = 1, new.method.name = "maxProbAmong1")
+    "SimilarityBasedWordwise"),
+  k = 1,
+  new.method.name = "maxProbAmong1"
+)
 }
 \arguments{
 \item{occupationalPredictions}{a data.table created with the \code{\link{expandPredictionResults}}-function from this package. Actually, the utility of this function is only if we \code{rbind} several such data.tables together (see example).}

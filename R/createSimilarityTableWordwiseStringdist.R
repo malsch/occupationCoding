@@ -34,6 +34,7 @@
 #'   \item{vect_vocab}{see \code{link{asDocumentTermMatrix}}}
 #' }
 #'
+#' @export
 #' @examples
 #' ## Prepare coding index
 #' # write female titles beneath the male title

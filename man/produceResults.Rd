@@ -19,7 +19,7 @@ produceResults(occupationalPredictions, k = 1, n, num.codes)
 a data.table
 }
 \description{
-Produces \code{\link{accuracy}}, \code{\link{plotReliabilityDiagram}}, \code{\link{sharpness}}, \code{\link{logLoss}}, \code{\link{plotTruePositivesVsFalsePositives}}, and \code{\link{plotAgreementRateVsProductionRate}}.
+Produces \code{\link{accuracy}}, \code{\link{plotReliabilityDiagram}}, \code{\link{sharpness}}, \code{\link{logLoss}}, \code{\link{plotTruePredictionsVsFalsePredictions}}, and \code{\link{plotAgreementRateVsProductionRate}}.
 }
 \examples{
 # set up data

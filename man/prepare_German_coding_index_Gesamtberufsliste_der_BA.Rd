@@ -5,8 +5,10 @@
 \alias{prepare_German_coding_index_Gesamtberufsliste_der_BA}
 \title{Prepares the Gesamtberufsliste der BA to be used with this package}
 \usage{
-prepare_German_coding_index_Gesamtberufsliste_der_BA(path_to_file,
-  count.categories = FALSE)
+prepare_German_coding_index_Gesamtberufsliste_der_BA(
+  path_to_file,
+  count.categories = FALSE
+)
 }
 \arguments{
 \item{path_to_file}{path to downloaded file}

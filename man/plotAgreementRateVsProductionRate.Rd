@@ -4,8 +4,12 @@
 \alias{plotAgreementRateVsProductionRate}
 \title{Plot agreement rate vs. production rate}
 \usage{
-plotAgreementRateVsProductionRate(occupationalPredictionsAmongTopK, n,
-  yintercept, filename = NULL)
+plotAgreementRateVsProductionRate(
+  occupationalPredictionsAmongTopK,
+  n,
+  yintercept,
+  filename = NULL
+)
 }
 \arguments{
 \item{occupationalPredictionsAmongTopK}{a data table created with \code{\link{calcAccurateAmongTopK}}.}
@@ -53,5 +57,5 @@ plotAgreementRateVsProductionRate(calcAccurateAmongTopK(res.proc, k = 5), n = n.
 plotAgreementRateVsProductionRate(calcAccurateAmongTopK(res.proc, k = 1), n = n.test, yintercept = 0.85, filename = "test.pdf")
 }
 \seealso{
-\code{\link{plotTruePositivesVsFalsePositives}}, \code{\link{calcAccurateAmongTopK}}
+\code{\link{plotTruePredictionsVsFalsePredictions}}, \code{\link{calcAccurateAmongTopK}}
 }

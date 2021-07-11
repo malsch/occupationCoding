@@ -4,15 +4,19 @@
 \alias{trainXgboost}
 \title{Train an extreme gradient boosted tree model}
 \usage{
-trainXgboost(data, allowed.codes, testCases = NULL,
-  returnPredictions = FALSE, coding_index = NULL,
-  preprocessing = list(stopwords = character(0), stemming = "de",
-  countWords = TRUE), tuning = list(eta = 0.5, lambda = 1e-04, alpha = 0,
-  max.depth = 20, gamma = 0.6, min_child_weight = 0, max_delta_step = 1,
-  subsample = 0.75, colsample_bytree = 1, colsample_bylevel = 1, nrounds =
-  40, early_stopping_rounds = 1, early.stopping.max.diff =
-  sum(testCases)/100, early.stopping.precision.digits = 3, nthread = 1,
-  verbose = 1))
+trainXgboost(
+  data,
+  allowed.codes,
+  testCases = NULL,
+  returnPredictions = FALSE,
+  coding_index = NULL,
+  preprocessing = list(stopwords = character(0), stemming = "de", countWords = TRUE),
+  tuning = list(eta = 0.5, lambda = 1e-04, alpha = 0, max.depth = 20, gamma = 0.6,
+    min_child_weight = 0, max_delta_step = 1, subsample = 0.75, colsample_bytree = 1,
+    colsample_bylevel = 1, nrounds = 40, early_stopping_rounds = 1,
+    early.stopping.max.diff = sum(testCases)/100, early.stopping.precision.digits = 3,
+    nthread = 1, verbose = 1)
+)
 }
 \arguments{
 \item{data}{a data.table created with \code{\link{removeFaultyAndUncodableAnswers_And_PrepareForAnalysis}}}

@@ -48,3 +48,133 @@
 #'
 #' @encoding UTF-8
 "frequent_phrases"
+
+#' Anonymized training data (substring similarity) to be used with Similarity-based Reasoning
+#'
+#' This aggregated (anonymized) training data is to be used within the \code{\link{trainSimilarityBasedReasoning2}}-function (\code{dist.type = "substring"}), see the documentation therein. It allows the coding of German language occuptions into the German Classification of Occupations (KldB 2010).
+#'
+#' @format A data.table with 39242 rows and 3 variables:
+#' \describe{
+#'   \item{dictString}{Job titles (and similars). They were either taken from the \code{Gesamtberufsliste_der_BA} or from \code{\link{frequent_phrases}}}
+#'   \item{survCode}{5-digit codes from the survey data}
+#'   \item{N}{Frequency of how often a survey text identical or similar to \code{dictString} was coded as \code{survCode} (using substring-similarity)}
+#' }
+#'
+#' Substring-similarity means that, to be counted, the survey response must contain the text in dictString, i.e., dictString must be identical or shorter than the original text provided by the respondent.
+#'
+#' @seealso
+#' See \code{\link{trainSimilarityBasedReasoning2}}, for which this data set was created, and \code{\link{surveyCountsWordwiseSimilarity}}, which has been created the same way but uses a different metric to calculate string similarities.
+#'
+#' @source
+#' Data from the following surveys were pooled:
+#'
+#' Antoni, M., Drasch, K., Kleinert, C., Matthes, B., Ruland, M. and Trahms, A. (2010): Arbeiten und Lernen im Wandel * Teil 1: Überblick über die Studie, FDZ-Methodenreport 05/2010, Forschungsdatenzentrum der Bundesagentur für Arbeit im Institut für Arbeitsmarkt- und Berufsforschung, Nuremberg.
+#'
+#' Rohrbach-Schmidt, D., Hall, A. (2013): BIBB/BAuA Employment Survey 2012, BIBB-FDZ Data and Methodological Reports Nr. 1/2013. Version 4.1, Federal Institute for Vocational Education and Training (Research Data Centre), Bonn.
+#'
+#' Lange, C., Finger, J., Allen, J., Born, S., Hoebel, J., Kuhnert, R., Müters, S., Thelen, J., Schmich, P., Varga, M., von der Lippe, E., Wetzstein, M., Ziese, T. (2017): Implementation of the European Health Interview Survey (EHIS) into the German Health Update (GEDA), Archives of Public Health, 75, 1–14.
+#'
+#' Hoffmann, R., Lange, M., Butschalowsky, H., Houben, R., Schmich, P., Allen, J., Kuhnert, R., Schaffrath Rosario, A., Gößwald, A. (2018): KiGGS Wave 2 Cross-Sectional Study—Participant Acquisition, Response Rates and Representativeness, Journal of Health Monitoring, 3, 78–91. (only wave 2)
+#'
+#' Trappmann, M., Beste, J., Bethmann, A., Müller, G. (2013): The PASS Panel Survey after Six Waves, Journal for Labour Market Research, 46, 275–281. (only wave 10)
+#'
+#' Job titles were taken from the following publication:
+#'
+#' Bundesagentur für Arbeit (2019). Gesamtberufsliste der Bundesagentur für Arbeit. Stand: 03.01.2019. The \code{Gesamtberufsliste der BA} is available at \link{https://download-portal.arbeitsagentur.de/files/}.
+#'
+#' @examples
+#' ## what follows is the source code used to create this data set
+#' ##
+#' 
+#' # load toy example data
+#' data(occupations) # toy example, the five data sets cited above were used instead
+#' # In addition to codes from ther 2010 German Classification of Occupations, our data make use of the following special codes:
+#' (special_codes <- c("-0004" = "genaue Kodierung nicht möglich", "-0006" = "Multiple jobs", "-0012" = "Blue-colar worker", "-0030" = "Student employee/assistant, work placement student, research assistant", "-0019" = "Federal volunteer service, voluntary social year (FSJ), civil service"))
+#' data(coding_index_excerpt) # toy example, the Gesamtberufsliste was used instead. After running ?prepare_German_coding_index_Gesamtberufsliste_der_BA, our version of the coding index had 27853 entries.
+#' data(frequent_phrases)
+#'
+#' # prepare coding index for our purposes
+#' coding_index <- coding_index_excerpt[!(Berufsbenennungen %in% c("Bundeskanzler/in", "Bundespräsident/in", "Admiral", "General"))] # remove very rare occupations that might violate privacy regulations
+#' coding_index_w_codes <- rbind(coding_index[, list(title = bezMale, Code)], coding_index[, list(title = bezFemale, Code)])
+#' coding_index_w_codes <- coding_index_w_codes[,title := stringPreprocessing(title)]
+#' coding_index_w_codes <- coding_index_w_codes[!duplicated(title)]
+#'
+#' # prepare the training data (special codes were harmonized in advance)
+#' training_data <- occupations[, .(answer = stringPreprocessing(orig_answer), code = orig_code)]
+#'
+#' # trick to save time: do this only once for each unique string and merge later
+#' similarityTableSubstring <- createSimilarityTableSubstring(unique.string = unique(training_data$answer),
+#'                                                            coding_index_w_codes = coding_index_w_codes,
+#'                                                            coding_index_without_codes = frequent_phrases)
+#' similarityTableSubstring2 <- rbind(similarityTableSubstring$dist_table_w_code[, .(intString, dictString = dictString.title)],
+#'                                    similarityTableSubstring$dist_table_without_code[, .(intString, dictString)])
+#' surveyCountsSubstringSimilarity_toyExample <- merge(training_data[, .(answer, survCode = code)], similarityTableSubstring2, by.x = "answer", by.y = "intString", allow.cartesian = TRUE)[, .N, by = list(dictString, survCode)][order(dictString)]
+#'
+#' @encoding UTF-8
+"surveyCountsSubstringSimilarity"
+
+#' Anonymized training data (wordwise similarity) to be used with Similarity-based Reasoning
+#'
+#' This aggregated (anonymized) training data is to be used within the \code{\link{trainSimilarityBasedReasoning2}}-function (\code{dist.type = "wordwise", dist.control = list(method = "osa", weight = c(d = 1, i = 1, s = 1, t = 1)), threshold = c(max = NA, use = 1))}, see the documentation therein. It allows the coding of German language occuptions into the German Classification of Occupations (KldB 2010).
+#'
+#' @format A data.table with 26710 rows and 3 variables:
+#' \describe{
+#'   \item{dictString}{Job titles (and similars). They were either taken from the \code{Gesamtberufsliste_der_BA} or from \code{\link{frequent_phrases}}}
+#'   \item{survCode}{5-digit codes from the survey data}
+#'   \item{N}{Frequency of how often a survey text identical or similar to \code{dictString} was coded as \code{survCode} (using wordwise-similarity)}
+#' }
+#'
+#' Wordwise-similarity means that, to be counted, the verbal survey answer must be similar to dictString, more specifically, dictString must be identical with any one word in the survey response (a difference by at most one character is allowed to account for spelling errors).
+#'
+#' @seealso
+#' See \code{\link{trainSimilarityBasedReasoning2}}, for which this data set was created, and \code{\link{surveyCountsSubstringSimilarity}}, which has been created the same way but uses a different metric to calculate string similarities.
+#'
+#' @source
+#' Data from the following surveys were pooled:
+#'
+#' Antoni, M., Drasch, K., Kleinert, C., Matthes, B., Ruland, M. and Trahms, A. (2010): Arbeiten und Lernen im Wandel * Teil 1: Überblick über die Studie, FDZ-Methodenreport 05/2010, Forschungsdatenzentrum der Bundesagentur für Arbeit im Institut für Arbeitsmarkt- und Berufsforschung, Nuremberg.
+#'
+#' Rohrbach-Schmidt, D., Hall, A. (2013): BIBB/BAuA Employment Survey 2012, BIBB-FDZ Data and Methodological Reports Nr. 1/2013. Version 4.1, Federal Institute for Vocational Education and Training (Research Data Centre), Bonn.
+#'
+#' Lange, C., Finger, J., Allen, J., Born, S., Hoebel, J., Kuhnert, R., Müters, S., Thelen, J., Schmich, P., Varga, M., von der Lippe, E., Wetzstein, M., Ziese, T. (2017): Implementation of the European Health Interview Survey (EHIS) into the German Health Update (GEDA), Archives of Public Health, 75, 1–14.
+#'
+#' Hoffmann, R., Lange, M., Butschalowsky, H., Houben, R., Schmich, P., Allen, J., Kuhnert, R., Schaffrath Rosario, A., Gößwald, A. (2018): KiGGS Wave 2 Cross-Sectional Study—Participant Acquisition, Response Rates and Representativeness, Journal of Health Monitoring, 3, 78–91. (only wave 2)
+#'
+#' Trappmann, M., Beste, J., Bethmann, A., Müller, G. (2013): The PASS Panel Survey after Six Waves, Journal for Labour Market Research, 46, 275–281. (only wave 10)
+#'
+#' Job titles were taken from the following publication:
+#'
+#' Bundesagentur für Arbeit (2019). Gesamtberufsliste der Bundesagentur für Arbeit. Stand: 03.01.2019. The \code{Gesamtberufsliste der BA} is available at \link{https://download-portal.arbeitsagentur.de/files/}.
+#'
+#' @examples
+#' ## what follows is the source code used to create this data set
+#' ##
+#' 
+#' # load toy example data
+#' data(occupations) # toy example, the five data sets cited above were used instead
+#' # In addition to codes from ther 2010 German Classification of Occupations, our data make use of the following special codes:
+#' (special_codes <- c("-0004" = "genaue Kodierung nicht möglich", "-0006" = "Multiple jobs", "-0012" = "Blue-colar worker", "-0030" = "Student employee/assistant, work placement student, research assistant", "-0019" = "Federal volunteer service, voluntary social year (FSJ), civil service"))
+#' data(coding_index_excerpt) # toy example, the Gesamtberufsliste was used instead. After running ?prepare_German_coding_index_Gesamtberufsliste_der_BA, our version of the coding index had 27853 entries.
+#' data(frequent_phrases)
+#'
+#' # prepare coding index for our purposes
+#' coding_index <- coding_index_excerpt[!(Berufsbenennungen %in% c("Bundeskanzler/in", "Bundespräsident/in", "Admiral", "General"))] # remove very rare occupations that might violate privacy regulations
+#' coding_index_w_codes <- rbind(coding_index[, list(title = bezMale, Code)], coding_index[, list(title = bezFemale, Code)])
+#' coding_index_w_codes <- coding_index_w_codes[,title := stringPreprocessing(title)]
+#' coding_index_w_codes <- coding_index_w_codes[!duplicated(title)]
+#'
+#' # prepare the training data (special codes were harmonized in advance)
+#' training_data <- occupations[, .(answer = stringPreprocessing(orig_answer), code = orig_code)]
+#'
+#' # trick to save time: do this only once for each unique string and merge later
+#' similarityTableWordwise <- createSimilarityTableWordwiseStringdist(unique.string = unique(training_data$answer),
+#'                                                                    coding_index_w_codes = coding_index_w_codes,
+#'                                                                    coding_index_without_codes = occupationCoding::frequent_phrases,
+#'                                                                    preprocessing = list(stopwords = NULL, stemming = NULL, strPreprocessing = TRUE, removePunct = FALSE),
+#'                                                                    dist.control = list(method = "osa", weight = c(d = 1, i = 1, s = 1, t = 1)),
+#'                                                                    threshold = 1)
+#' similarityTableWordwise2 <- rbind(similarityTableWordwise$dist_table_w_code[, .(intString, dictString = dictString.title)],
+#'                                   similarityTableWordwise$dist_table_without_code[, .(intString, dictString)])
+#' surveyCountsWordwiseSimilarity_toyExample <- merge(training_data[, .(answer, survCode = code)], similarityTableWordwise2, by.x = "answer", by.y = "intString", allow.cartesian = TRUE)[, .N, by = list(dictString, survCode)][order(dictString)]
+#' @encoding UTF-8
+"surveyCountsWordwiseSimilarity"

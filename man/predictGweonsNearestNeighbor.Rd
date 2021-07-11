@@ -4,8 +4,11 @@
 \alias{predictGweonsNearestNeighbor}
 \title{Predict codes with Gweons Nearest Neighbor Method}
 \usage{
-predictGweonsNearestNeighbor(model, newdata,
-  tuning = list(nearest.neighbors.multiplier = 0.1))
+predictGweonsNearestNeighbor(
+  model,
+  newdata,
+  tuning = list(nearest.neighbors.multiplier = 0.1)
+)
 }
 \arguments{
 \item{model}{the output created from \code{\link{trainGweonsNearestNeighbor}}}

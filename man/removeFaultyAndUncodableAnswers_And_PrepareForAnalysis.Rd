@@ -5,9 +5,12 @@
 \alias{removeFaultyAndUncodableAnswers_And_PrepareForAnalysis}
 \title{Data Preparation}
 \usage{
-removeFaultyAndUncodableAnswers_And_PrepareForAnalysis(data,
-  colNames = c("answer", "code"), allowed.codes,
-  allowed.codes.titles = 1:length(allowed.codes))
+removeFaultyAndUncodableAnswers_And_PrepareForAnalysis(
+  data,
+  colNames = c("answer", "code"),
+  allowed.codes,
+  allowed.codes.titles = 1:length(allowed.codes)
+)
 }
 \arguments{
 \item{allowed.codes}{a vector of allowed codes from the classification.}
@@ -31,7 +34,7 @@ The 2010 German classification is available at \url{https://www.klassifikationss
 occupations <- data.table(answers = c("LEITER VERTRIEB", "Kfz-Schlossermeister", "Aushilfe im Hotel(Bereich Housekeeping)"),
                    codes = c("61194", "25213", "63221"))
 (allowed.codes <- c("11101", "61194", "25213", "63221", "..."))
-(allowed.codes.titles <- c("Berufe in der Landwirtschaft (ohne Spezialisierung) - Helfer-/Anlernt\\xe4tigkeiten", "Berufe in der Kraftfahrzeugtechnik - komplexe Spezialistent\\xe4tigkeiten", "F\\xfchrungskräfte - Einkauf und Vertrieb", "Berufe im Hotelservice - Helfer-/Anlernt\\xe4tigkeiten", "many more category labels from the classification"))
+(allowed.codes.titles <- c("Berufe in der Landwirtschaft (ohne Spezialisierung) - Helfer-/Anlernt\xe4tigkeiten", "Berufe in der Kraftfahrzeugtechnik - komplexe Spezialistent\xe4tigkeiten", "F\xfchrungskräfte - Einkauf und Vertrieb", "Berufe im Hotelservice - Helfer-/Anlernt\xe4tigkeiten", "many more category labels from the classification"))
 removeFaultyAndUncodableAnswers_And_PrepareForAnalysis(occupations, colNames = c("answers", "codes"), allowed.codes, allowed.codes.titles)
 
 data(occupations)

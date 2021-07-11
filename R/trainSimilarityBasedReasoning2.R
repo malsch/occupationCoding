@@ -1,15 +1,16 @@
-#' Train Similarity Based Probability Model
+#' Train Similarity Based Probability Model with anonymized training data
 #'
-#' For each entry in the coding index, look up how answers that are similar to the coding index were coded in training data and calculate probabilities.
-#'
-#' @param data a data.table created with \code{\link{removeFaultyAndUncodableAnswers_And_PrepareForAnalysis}}
+#' The output of this function is the same as from \code{\link{trainSimilarityBasedReasoning}}, but as input \code{trainSimilarityBasedReasoning2} only requires aggregated (and thus anonymized) training data. We provide such training data for coding of German occupations into the German classification of Occupations (KldB 2010) as part of this package (see \code{\link{surveyCountsSubstringSimilarity}} and \code{\link{surveyCountsWordwiseSimilarity}}). Parameter settings for this function should be the same as those used to anonymize the training data. The examples below detail recommended application. 
+#' 
+#' @param anonymized_data \code{\link{surveyCountsSubstringSimilarity}} or \code{\link{surveyCountsWordwiseSimilarity}}
+#' @param num.allowed.codes the number of allowed codes in the target classification. There are 1286 categories in the KldB 2010 plus 5 special codes in both anonymized training data sets, so the default value is 1291.
 #' @param coding_index_w_codes a data.table with columns
 #' \describe{
 #'   \item{bezMale}{a character vector, contains masculine job titles from the coding index.}
 #'   \item{bezFemale}{a character vector, contains feminine job titles from the coding index.}
 #'   \item{Code}{a character vector with associated classification codes.}
 #' }
-#' @param coding_index_without_codes a preprocessed character vector, meant for \code{\link{frequent_phrases}}
+#' @param coding_index_without_codes (not used, but automatically determined) Any words from \code{anonymized_data$dictString} that are not found within \code{coding_index_w_codes} belong into this character vector.
 #' @param preprocessing a list with elements
 #' \describe{
 #'   \item{stopwords}{a character vector, use \code{tm::stopwords("de")} for German stopwords. Only used if \code{dist.type = "wordwise"}.}
@@ -17,7 +18,7 @@
 #'   \item{strPreprocessing}{\code{TRUE} if \code{\link{stringPreprocessing}} shall be used.}
 #'   \item{removePunct}{\code{TRUE} if \code{\link[tm]{removePunctuation}} shall be used.}
 #' }
-#' @param dist.type How to calculate similarity between entries from both coding_indices and verbal answers from the survey? Three options are currently supported. Since we use the \code{\link[stringdist]{stringdist}}-function excessively, one could easily extend the functionality of this procedure to other distance metrics.
+#' @param dist.type How to calculate similarity between entries from both coding_indices and verbal answers from the survey? Three options are currently supported.  Since we use the \code{\link[stringdist]{stringdist}}-function excessively, one could easily extend the functionality of this procedure to other distance metrics.
 #' \describe{
 #'   \item{dist.type = "fulltext"}{Uses the \code{\link[stringdist]{stringdist}}-function directly after preprocessing to calculate distances. (the simplest approach but least useful.)}
 #'   \item{dist.type = "substring"}{An entry from the coding index and a verbal answer are similar if the entry from the coding index is a substring of the verbal answer.}
@@ -30,13 +31,11 @@
 #'   \item{n.draws}{Number of draws from the posterior distribution to determine posterior predictive probabilities. The larger, the more precise the results will be.}
 #'   \item{check.normality}{We would like that the hyperprior distribution is normal. Set check.normality to TRUE to do some diagnostics about this.}
 #' }
-#' @param tmp_folder The name of a folder where the algorithm will store the results from similarity calculations. Use any folder you like. Links between verbal answers and coding indices are only stored if the distance is \code{<= threshold[1]}
+#' @param tmp_folder (not used)
 #'
 #' @seealso
-#' See \code{\link{predictSimilarityBasedReasoning}} for more examples and recommended settings. See \code{\link{trainSimilarityBasedReasoning2}} for the same functionality, but using aggregated (anonymized!) training data. German training data are available.
-#'
-#' \code{\link{createSimilarityTableWordwiseStringdist}}, \code{\link{createSimilarityTableSubstring}}, \code{\link{createSimilarityTableStringdist}} for implementations of the different \code{dist.type}. \code{\link{frequent_phrases}} is a character vector with frequent German answers.
-#'
+#' See \code{\link{trainSimilarityBasedReasoning}}, which allows to run the same procedures using non-aggregated training data.
+#' 
 #' Schierholz, Malte (2019): New methods for job and occupation classification. Dissertation, Mannheim. \url{https://madoc.bib.uni-mannheim.de/50617/}, pp. 206-208 and p. 268, pp. 308-320
 #'
 #' @return a list with components
@@ -48,13 +47,13 @@
 #'   \item{dist.type}{The input parameter stored to replicate distance calculations with incoming data.}
 #'   \item{dist.control}{The input parameter stored to replicate distance calculations with incoming data.}
 #'   \item{threshold}{The input parameter stored to replicate distance calculations with incoming data.}
-#'   \item{simulation.control}{The input parameter.}
+#'   \item{simulation.control}{The input parameters controlling the Monte Carlo simulation.}
 #' }
 #' @import data.table
 #' @export
 #'
 #' @examples
-#' # set up data
+#' # set up test data
 #' data(occupations)
 #' allowed.codes <- c("71402", "71403", "63302", "83112", "83124", "83131", "83132", "83193", "83194", "-0004", "-0030")
 #' allowed.codes.titles <- c("Office clerks and secretaries (without specialisation)-skilled tasks", "Office clerks and secretaries (without specialisation)-complex tasks", "Gastronomy occupations (without specialisation)-skilled tasks",
@@ -62,31 +61,69 @@
 #'  "Not precise enough for coding", "Student assistants")
 #' proc.occupations <- removeFaultyAndUncodableAnswers_And_PrepareForAnalysis(occupations, colNames = c("orig_answer", "orig_code"), allowed.codes, allowed.codes.titles)
 #'
-#' # train model
-#' simBasedModel <- trainSimilarityBasedReasoning(data = proc.occupations,
-#'                               coding_index_w_codes = coding_index_excerpt,
-#'                               coding_index_without_codes = frequent_phrases,
-#'                               preprocessing = list(stopwords = tm::stopwords("de"), stemming = NULL, strPreprocessing = TRUE, removePunct = FALSE),
-#'                               dist.type = "wordwise",
-#'                               dist.control = list(method = "osa", weight = c(d = 1, i = 1, s = 1, t = 1)),
-#'                               threshold = c(max = 3, use = 1), simulation.control = list(n.draws = 50, check.normality = FALSE),
-#'                               tmp_folder = "similarityTables")
-trainSimilarityBasedReasoning <- function(data,
+#' # set up dictionary (see help file for how to obtain the dictionary)
+#' path_to_file <- "./Gesamtberufsliste_der_BA.xlsx" # change path
+#' try({coding_index_w_codes <- prepare_German_coding_index_Gesamtberufsliste_der_BA(path_to_file, count.categories = FALSE)}, silent = TRUE)
+#' # or, if the file does not exist at the given path, just use coding_index_excerpt
+#' if (!exists("coding_index_w_codes")) coding_index_w_codes <- coding_index_excerpt
+#'
+#' data(surveyCountsSubstringSimilarity)
+#' simBasedModelSubstring <- trainSimilarityBasedReasoning2(anonymized_data = surveyCountsSubstringSimilarity,
+#'                                                          num.allowed.codes = 1291,
+#'                                                          coding_index_w_codes = coding_index_w_codes,
+#'                                                          preprocessing = list(stopwords = NULL, stemming = NULL, strPreprocessing = TRUE, removePunct = FALSE),
+#'                                                          dist.type = "substring",
+#'                                                          dist.control = NA,
+#'                                                          threshold = NA,
+#'                                                          simulation.control = list(n.draws = 250, check.normality = FALSE)
+#'                                                          )
+#'
+#' res <- predictSimilarityBasedReasoning(simBasedModelSubstring, proc.occupations)
+#'
+#' # Look at most probable answer from each id
+#' res[, .SD[which.max(pred.prob), list(ans, true.code = code, pred.code, acc = code == pred.code)], by = id]
+#' res[, .SD[which.max(pred.prob), list(ans, true.code = code, pred.code, acc = code == pred.code)], by = id][, mean(acc)] # calculate aggrement rate
+#'
+#' # Look at a single person and order predictions by their probability. According to the algorithm the code 81112 has the highest probability, but the code 71402 (which was selected by a coder) has second-highest probability
+#' res[id == 11][order(pred.prob, decreasing = TRUE)]
+#'
+#' data(surveyCountsWordwiseSimilarity)
+#' simBasedModelWordwise <- trainSimilarityBasedReasoning2(anonymized_data = surveyCountsWordwiseSimilarity,
+#'                                                          num.allowed.codes = 1291,
+#'                                                          coding_index_w_codes = coding_index_w_codes,
+#'                                                          preprocessing = list(stopwords = NULL, stemming = NULL, strPreprocessing = TRUE, removePunct = FALSE),
+#'                                                          dist.type = "wordwise",
+#'                                                          dist.control = list(method = "osa", weight = c(d = 1, i = 1, s = 1, t = 1)),
+#'                                                          threshold = c(max = NA, use = 1),
+#'                                                          simulation.control = list(n.draws = 250, check.normality = FALSE)
+#' )
+#'
+#' res <- predictSimilarityBasedReasoning(simBasedModelWordwise, proc.occupations)
+#'
+#' # Look at most probable answer from each id
+#' res[, .SD[which.max(pred.prob), list(ans, true.code = code, pred.code, acc = code == pred.code)], by = id]
+#' res[, .SD[which.max(pred.prob), list(ans, true.code = code, pred.code, acc = code == pred.code)], by = id][, mean(acc)] # calculate aggrement rate
+#'
+#' # Look at a single person and order predictions by their probability. Other than previously, this algorithm predicts 71402, the correct code.
+#' res[id == 11][order(pred.prob, decreasing = TRUE)]
+trainSimilarityBasedReasoning2 <- function(anonymized_data,
+                                          num.allowed.codes = 1291,
                                           coding_index_w_codes,
-                                          coding_index_without_codes,
-                                          preprocessing = list(stopwords = tm::stopwords("de"), stemming = NULL, strPreprocessing = TRUE, removePunct = FALSE),
+                                          coding_index_without_codes = NULL,
+                                          preprocessing = list(stopwords = NULL, stemming = NULL, strPreprocessing = TRUE, removePunct = FALSE),
                                           dist.type = c("wordwise", "substring", "fulltext"),
                                           dist.control = list(method = "osa", weight = c(d = 1, i = 1, s = 1, t = 1)),
                                           threshold = c(max = 3, use = 1),
                                           simulation.control = list(n.draws = 250, check.normality = FALSE),
-                                          tmp_folder = "similarityTables") {
+                                          tmp_folder = NULL) {
+
 
   # codes <- data[,code]
-  num.allowed.codes <- length(attr(data, "classification")$code)
-  dataCopy <- copy(data[, list(ans, code, id)])
+  # num.allowed.codes <- length(attr(data, "classification")$code)
+  # dataCopy <- copy(data[, list(ans, code, id)])
 
   if (num.allowed.codes < 3) stop("Number of allowed codes is too low: ", num.allowed.codes)
-  if (!(tmp_folder %in% list.dirs(full.names = FALSE))) stop ("Please make sure the following folder exists: ", tmp_folder)
+  # if (!(tmp_folder %in% list.dirs(full.names = FALSE))) stop ("Please make sure the following folder exists: ", tmp_folder)
 
   ####
   # Prepare coding index
@@ -100,104 +137,137 @@ trainSimilarityBasedReasoning <- function(data,
     # we will need this column later to merge with survey data (that may also have answers coded which are not predicted by the dictionary)
   coding_index_w_codes[, dict.predicted.category := TRUE]
 
+  # Split surveyCounts in two parts (dictString is in the official coding index or not)
+  # preparation
+  surveyCountsWCodingIndex <- merge(anonymized_data, coding_index_w_codes, all = TRUE, by.x = c("dictString", "survCode"), by.y = c("title", "Code"))
+  wordsFromCodingIndex <- surveyCountsWCodingIndex[!is.na(dict.predicted.category), .N, by = dictString]$dictString
+
+  # 1. dictString is in the coding index (and an "official" code exists)
+  freq_table_WithCodingIndex <- surveyCountsWCodingIndex[dictString %in% wordsFromCodingIndex, list(string = dictString, code = survCode, N, dict.predicted.category)]
+  freq_table_WithCodingIndex[is.na(dict.predicted.category), dict.predicted.category := FALSE]
+  freq_table_WithCodingIndex[is.na(N), N := 0L]
+  # 2. dictString is not in the coding index (no "official" code exists)
+  freq_table_WithoutCodingIndex <- surveyCountsWCodingIndex[dictString %in% setdiff(surveyCountsWCodingIndex$dictString, wordsFromCodingIndex), list(string = dictString, code = survCode, N)]
+
+
   ###
-  # preprocessing
-  if (preprocessing$removePunct) {
-    dataCopy <- dataCopy[, ans := tm::removePunctuation(ans)]
-  }
-
-  if (preprocessing$strPreprocessing) {
-    dataCopy <- dataCopy[, ans := stringPreprocessing(ans)]
-  }
-
-  # 2 strategies to save time:
-  # - work with unique(ans)
-  # - save matching results and load them as needed
-
-  # second strategy
-  tmp.file.name <- sprintf("%s_%s_max%s.RData", dist.type, paste(unlist(dist.control), collapse = "_"), threshold[1])
-  if (tmp.file.name %in% list.files(tmp_folder)) {
-    load(file = paste(tmp_folder, tmp.file.name, sep = "/"))
-
-    # get intString that were processed previously
-    previousIntString <- c(similarityTable$dist_table_w_code[, intString], similarityTable$dist_table_without_code[, intString], strings.not.found)
-    new.unique.string <- setdiff(dataCopy$ans, previousIntString)
-
-    if (length(new.unique.string) < 2) {
-      cat("Using existing similarityTable. new.unique.string is empty or only one element long: ", new.unique.string, "\n")
-    } else {
-      cat("Updating similarityTable... Number of new unique strings: ", length(new.unique.string), "\n")
-      similarityTableUpdate<- switch(dist.type,
-                                     wordwise = createSimilarityTableWordwiseStringdist(unique.string = new.unique.string,
-                                                                                   coding_index_w_codes = coding_index_w_codes,
-                                                                                   coding_index_without_codes = coding_index_without_codes,
-                                                                                   preprocessing = preprocessing,
-                                                                                   dist.control = dist.control,
-                                                                                   threshold = threshold[1]),
-                                     substring =  createSimilarityTableSubstring(unique.string = new.unique.string,
-                                                                            coding_index_w_codes = coding_index_w_codes,
-                                                                            coding_index_without_codes = coding_index_without_codes),
-                                     fulltext =  createSimilarityTableStringdist(unique.string = new.unique.string,
-                                                                            coding_index_w_codes = coding_index_w_codes,
-                                                                            coding_index_without_codes = coding_index_without_codes,
-                                                                            dist.control = dist.control,
-                                                                            threshold = threshold[1])
-      )
-      similarityTable$dist_table_w_code <- rbind(similarityTable$dist_table_w_code, similarityTableUpdate$dist_table_w_code)
-      similarityTable$dist_table_without_code <- rbind(similarityTable$dist_table_without_code, similarityTableUpdate$dist_table_without_code)
-
-      cat("Number of strings not found in previous data:", length(strings.not.found), "\n")
-      strings.not.found <- c(strings.not.found, setdiff(new.unique.string, c(similarityTable$dist_table_w_code[, intString], similarityTable$dist_table_without_code[, intString])))
-      cat("Number of strings not found after updating with current data (adding more elements):", length(strings.not.found), "\n")
-      save(similarityTable, strings.not.found,  file = paste(tmp_folder, tmp.file.name, sep = "/"))
-    }
-
-  } else { # no previous matching file was created
-    unique.string <- unique(dataCopy$ans) # first strategy
-    similarityTable <- switch(dist.type,
-                              wordwise = createSimilarityTableWordwiseStringdist(unique.string = unique.string,
-                                                              coding_index_w_codes = coding_index_w_codes,
-                                                              coding_index_without_codes = coding_index_without_codes,
-                                                              preprocessing = preprocessing,
-                                                              dist.control = dist.control,
-                                                              threshold = threshold[1]),
-                              substring =  createSimilarityTableSubstring(unique.string = unique.string,
-                                                       coding_index_w_codes = coding_index_w_codes,
-                                                       coding_index_without_codes = coding_index_without_codes),
-                              fulltext =  createSimilarityTableStringdist(unique.string = unique.string,
-                                                       coding_index_w_codes = coding_index_w_codes,
-                                                       coding_index_without_codes = coding_index_without_codes,
-                                                       dist.control = dist.control,
-                                                       threshold = threshold[1])
-                              )
-
-    strings.not.found <- setdiff(unique.string, c(similarityTable$dist_table_w_code[, intString], similarityTable$dist_table_without_code[, intString]))
-    cat("Number of strings not found: ", length(strings.not.found), "\n")
-
-    save(similarityTable, strings.not.found, file = paste(tmp_folder, tmp.file.name, sep = "/"))
-  }
+  # the following is essentially what I already did when I prepared the anonymized_data
+  ###
+  # # preprocessing
+  # if (preprocessing$removePunct) {
+  #   dataCopy <- dataCopy[, ans := tm::removePunctuation(ans)]
+  # }
+  #
+  # if (preprocessing$strPreprocessing) {
+  #   dataCopy <- dataCopy[, ans := stringPreprocessing(ans)]
+  # }
+  #
+  # # 2 strategies to save time:
+  # # - work with unique(ans)
+  # # - save matching results and load them as needed
+  #
+  # # second strategy
+  # tmp.file.name <- sprintf("%s_%s_max%s.RData", dist.type, paste(unlist(dist.control), collapse = "_"), threshold[1])
+  # if (tmp.file.name %in% list.files(tmp_folder)) {
+  #   load(file = paste(tmp_folder, tmp.file.name, sep = "/"))
+  #
+  #   # get intString that were processed previously
+  #   previousIntString <- c(similarityTable$dist_table_w_code[, intString], similarityTable$dist_table_without_code[, intString], strings.not.found)
+  #   new.unique.string <- setdiff(dataCopy$ans, previousIntString)
+  #
+  #   if (length(new.unique.string) < 2) {
+  #     cat("Using existing similarityTable. new.unique.string is empty or only one element long: ", new.unique.string, "\n")
+  #   } else {
+  #     cat("Updating similarityTable... Number of new unique strings: ", length(new.unique.string), "\n")
+  #     similarityTableUpdate<- switch(dist.type,
+  #                                    wordwise = createSimilarityTableWordwiseStringdist(unique.string = new.unique.string,
+  #                                                                                  coding_index_w_codes = coding_index_w_codes,
+  #                                                                                  coding_index_without_codes = coding_index_without_codes,
+  #                                                                                  preprocessing = preprocessing,
+  #                                                                                  dist.control = dist.control,
+  #                                                                                  threshold = threshold[1]),
+  #                                    substring =  createSimilarityTableSubstring(unique.string = new.unique.string,
+  #                                                                           coding_index_w_codes = coding_index_w_codes,
+  #                                                                           coding_index_without_codes = coding_index_without_codes),
+  #                                    fulltext =  createSimilarityTableStringdist(unique.string = new.unique.string,
+  #                                                                           coding_index_w_codes = coding_index_w_codes,
+  #                                                                           coding_index_without_codes = coding_index_without_codes,
+  #                                                                           dist.control = dist.control,
+  #                                                                           threshold = threshold[1])
+  #     )
+  #     similarityTable$dist_table_w_code <- rbind(similarityTable$dist_table_w_code, similarityTableUpdate$dist_table_w_code)
+  #     similarityTable$dist_table_without_code <- rbind(similarityTable$dist_table_without_code, similarityTableUpdate$dist_table_without_code)
+  #
+  #     cat("Number of strings not found in previous data:", length(strings.not.found), "\n")
+  #     strings.not.found <- c(strings.not.found, setdiff(new.unique.string, c(similarityTable$dist_table_w_code[, intString], similarityTable$dist_table_without_code[, intString])))
+  #     cat("Number of strings not found after updating with current data (adding more elements):", length(strings.not.found), "\n")
+  #     save(similarityTable, strings.not.found,  file = paste(tmp_folder, tmp.file.name, sep = "/"))
+  #   }
+  #
+  # } else { # no previous matching file was created
+  #   unique.string <- unique(dataCopy$ans) # first strategy
+  #   similarityTable <- switch(dist.type,
+  #                             wordwise = createSimilarityTableWordwiseStringdist(unique.string = unique.string,
+  #                                                             coding_index_w_codes = coding_index_w_codes,
+  #                                                             coding_index_without_codes = coding_index_without_codes,
+  #                                                             preprocessing = preprocessing,
+  #                                                             dist.control = dist.control,
+  #                                                             threshold = threshold[1]),
+  #                             substring =  createSimilarityTableSubstring(unique.string = unique.string,
+  #                                                      coding_index_w_codes = coding_index_w_codes,
+  #                                                      coding_index_without_codes = coding_index_without_codes),
+  #                             fulltext =  createSimilarityTableStringdist(unique.string = unique.string,
+  #                                                      coding_index_w_codes = coding_index_w_codes,
+  #                                                      coding_index_without_codes = coding_index_without_codes,
+  #                                                      dist.control = dist.control,
+  #                                                      threshold = threshold[1])
+  #                             )
+  #
+  #   strings.not.found <- setdiff(unique.string, c(similarityTable$dist_table_w_code[, intString], similarityTable$dist_table_without_code[, intString]))
+  #   cat("Number of strings not found: ", length(strings.not.found), "\n")
+  #
+  #   save(similarityTable, strings.not.found, file = paste(tmp_folder, tmp.file.name, sep = "/"))
+  # }
 
   #######################################################
   # functions that will be called below
   #######################################################
 
-  create.prediction.dataset.given.distance <- function(complete.data, sim.dict, sim.self.dict, dict, K, n, check.normality) {
-    # make predictions using the official dictionary
+  # create.prediction.dataset.given.distance <- function(complete.data, sim.dict, sim.self.dict, dict, K, n, check.normality) {
+  #   # make predictions using the official dictionary
+  #
+  #   setkey(sim.dict, intString)
+  #   setkey(sim.self.dict, intString)
+  #   setkey(complete.data, ans)
+  #
+  #   # merge with interview (i.e. what appeared previously a single time in u.string appears now as often as the u.string was mentioned in survey answers)
+  #   # make predictions using monte carlo (this takes a while but the computations need only to be done a single time)
+  #   predi <- make.predictions.using.dictionary.information(complete.data[sim.dict, list(dictString = dictString.title, dict.code = dictString.Code, surv.string = ans, surv.code = surv.code), allow.cartesian=TRUE],
+  #                                                          dict = dict, K = K, n = n, check.normality = check.normality)
+  #   predi$model.prob[, dist := "official"]
+  #   predi$category.prob[, dist := "official"]
+  #
+  #   # merge with interview (i.e. what appeared previously a single time in u.string appears now as often as the u.string was mentioned in survey answers)
+  #   # make predictions using monte carlo (this takes a while but the computations need only to be done a single time)
+  #   predi.sd <- make.predictions.not.using.dictionary.information(complete.data[sim.self.dict, list(dictString = dictString, surv.string = ans, surv.code = surv.code), allow.cartesian=TRUE],
+  #                                                                 K = K, n = n, check.normality = check.normality)
+  #   predi.sd$model.prob[, dist := "selfcreated"]
+  #   predi.sd$category.prob[, dist := "selfcreated"]
+  #
+  #   return(list(modelProb = rbind(predi$model.prob, predi.sd$model.prob),
+  #               categoryProb =   rbind(predi$category.prob, predi.sd$category.prob)))
+  # }
 
-    setkey(sim.dict, intString)
-    setkey(sim.self.dict, intString)
-    setkey(complete.data, ans)
+  create.prediction.dataset.given.distance2 <- function(freq_table_WithCodingIndex, freq_table_WithoutCodingIndex, dict, K, n, check.normality) {
 
-    # merge with interview (i.e. what appeared previously a single time in u.string appears now as often as the u.string was mentioned in survey answers)
-    # make predictions using monte carlo (this takes a while but the computations need only to be done a single time)
-    predi <- make.predictions.using.dictionary.information(complete.data[sim.dict, list(dictString = dictString.title, dict.code = dictString.Code, surv.string = ans, surv.code = surv.code), allow.cartesian=TRUE],
-                                                           dict = dict, K = K, n = n, check.normality = check.normality)
+    # first make calculations for answers where we have a dictionary code
+    predi <- make.predictions.using.dictionary.information2(freq_table_WithCodingIndex,
+                                                                  K = K, n = n, check.normality = check.normality)
     predi$model.prob[, dist := "official"]
     predi$category.prob[, dist := "official"]
 
-    # merge with interview (i.e. what appeared previously a single time in u.string appears now as often as the u.string was mentioned in survey answers)
-    # make predictions using monte carlo (this takes a while but the computations need only to be done a single time)
-    predi.sd <- make.predictions.not.using.dictionary.information(complete.data[sim.self.dict, list(dictString = dictString, surv.string = ans, surv.code = surv.code), allow.cartesian=TRUE],
+    # now go for the answers where we dont have a dictionary code
+    predi.sd <- make.predictions.not.using.dictionary.information2(freq_table_WithoutCodingIndex,
                                                                   K = K, n = n, check.normality = check.normality)
     predi.sd$model.prob[, dist := "selfcreated"]
     predi.sd$category.prob[, dist := "selfcreated"]
@@ -213,17 +283,12 @@ trainSimilarityBasedReasoning <- function(data,
   ############
 
   # This function accepts training data and the dictionary to make probabilistic predictions for all entries in the dictionary
-  make.predictions.using.dictionary.information <- function(table, dict = dict, K = K, n = n, check.normality = check.normality) {
-    # accepts a data.table "table" that should have the following variables:
-    # - dictString : the official rule from the dictionary
-    # - dictCode : the official code from the dictionary
-    # - surv.string (not used) : the observed survey answer
-    # - surv.code : the assigned survey code
-    # - dist (not used) : some distance measure between dictString and surv.string. Predictions are based on the assumption of exchangeability, meaning that all surv.strings are equally informative about the associated dictString independent of dist. This means dist should not vary too much
-    # - fold (not used): the fold of the survey data
-    # "dict" is a data.table with 2 columns
-    # - title : list of job titles (dictString should be a subset of this)
-    # - Code : the official code from the dictionary
+  make.predictions.using.dictionary.information2 <- function(freq_table, K = K, n = n, check.normality = check.normality) {
+    # accepts a data.table "freq_table" that should have the following variables:
+    # - string : the rule
+    # - code : any possible code
+    # - N : how often in the survey data the rule applies and the corresponding code was chosen
+    # - dict.predicted.category: whether the code is the one which is in the official dictionary
     # "K" is the number of codes that may appear in the classification
     # "n" is the number of random draws for monte carlo integration -> larger n decreases the monte carlo error
     # "check.normality" : should a graphical display be created to see if  p(phi | y, x) is well approximated by Normal(post.modus.phi.given.y, posterior.covariance)
@@ -315,15 +380,6 @@ trainSimilarityBasedReasoning <- function(data,
       return(list(model.prob = model.prob, category.prob = category.prob))
     }
 
-    # aggregate data to calculate posterior modus and posterior variance
-    # this dataset contains for each center point (=entries from the dictionary) how many survey answers are similar and how they were coded
-    freq_table <- table[, .N, by = list(string = dictString, code = surv.code, dict.predicted.category = dict.code == surv.code)]
-
-    # merge with dictionary so that we can also make predictions about new strings that appear in the dictionary but not in the survey data
-    # freq_table2 contains all combinations of coding_index strings and its associated codes (from trainging data and coding index) (and one could actually use it instead of freq_table because N = 0 cancels out in our formulas)
-    freq_table2 <- merge(freq_table, dict, by.x = c("string", "code", "dict.predicted.category"), by.y = c("title", "Code", "dict.predicted.category"), all = TRUE)
-    freq_table2[is.na(N), N := 0L]
-
     # calculate posterior modus and posterior variance
     post.modus.phi.given.y <- optim(c(1, 0.005), fn = p.log.phi.y, gr = gradient.p.log.phi.y, data = freq_table, K = K, method = "L-BFGS-B", lower = c(0.0001, 0.00001), upper = c(10,10), control = list(fnscale = -5))$par
     posterior.covariance <- observed.fisher.information(post.modus.phi.given.y, data = freq_table, K = K)
@@ -334,18 +390,15 @@ trainSimilarityBasedReasoning <- function(data,
     # to calculate
     # root of p(y_r | M_r, \phi) = \int p(y_r | M_r, \phi) p(phi | y) dphi (function mean.d.y.given.phi, probability that a given rule/model should be used), should have the same dimension as coding_index
     # predictive probability p(y_fk | M_r) = \int p(y_fk | M_r, phi) p(phi) dphi (function mean.theta.given.phi, predictive probability of codes given the rule/model is correct), should have same dimensionality as freq_table2
-    return(monte.carlo.approx.nv(n = n, post.modus.phi.given.y, posterior.covariance, freq_table2, K = K))
+    return(monte.carlo.approx.nv(n = n, post.modus.phi.given.y, posterior.covariance, freq_table, K = K))
   }
 
   # This function accepts training data to make probabilistic predictions for all entries in the dictionary
-  make.predictions.not.using.dictionary.information <- function(table, K = K, n = n, check.normality = FALSE) {
-    # accepts a data.table "table" that should have the following variables:
-    # - dictString : the official rule from the dictionary
-    # - dictCode : the official code from the dictionary
-    # - surv.string (not used) : the observed survey answer
-    # - surv.code : the assigned survey code
-    # - dist (not used) : some distance measure between dictString and surv.string. Predictions are based on the assumption of exchangeability, meaning that all surv.strings are equally informative about the associated dictString independent of dist. This means dist should not vary too much
-    # - fold (not used): the fold of the survey data
+  make.predictions.not.using.dictionary.information2 <- function(freq_table, K = K, n = n, check.normality = FALSE) {
+    # accepts a data.table "freq_table" that should have the following variables:
+    # - string : the rule
+    # - code : any possible code
+    # - N : how often in the survey data the rule applies and the corresponding code was chosen
     # "K" is the number of codes that may appear in the classification
     # "n" is the number of random draws for monte carlo integration -> larger n decreases the monte carlo error
     # "check.normality" : should a graphical display be created to see if  p(phi | y, x) is well approximated by Normal(post.modus.phi.given.y, posterior.covariance)
@@ -433,8 +486,6 @@ trainSimilarityBasedReasoning <- function(data,
       return(list(model.prob = model.prob, category.prob = category.prob))
     }
 
-    # aggregate data
-    freq_table <- table[, .N, by = list(string = dictString, code = surv.code)]
 
     # calculate posterior modus and posterior variance
     post.modus.phi.given.y <- optimize(f = p.log.phi.y.sd, interval = c(0, 10), freq_table, K = K, maximum = TRUE, tol = .Machine$double.eps^0.5)$maximum
@@ -449,13 +500,24 @@ trainSimilarityBasedReasoning <- function(data,
 
   ############################################
 
+  # cat("Lenghty similarity calculations finished. Starting with prediction dataset..")
 
-  cat("Lenghty similarity calculations finished. Starting with prediction dataset..")
+  # return(list(prediction.datasets = create.prediction.dataset.given.distance(dataCopy[,list(ans, surv.code = code, id)],
+  #                                                                            similarityTable$dist_table_w_code[intString %in% dataCopy[, ans] & dist <= threshold[2]],
+  #                                                                            similarityTable$dist_table_without_code[intString %in% dataCopy[, ans] & dist <= threshold[2]],
+  #                                                                            dict = coding_index_w_codes,
+  #                                                                            K = num.allowed.codes, # no KldB categories + no special codes in training data
+  #                                                                            n = simulation.control$n.draws,
+  #                                                                            check.normality = simulation.control$check.normality),
+  #             num.allowed.codes = num.allowed.codes,
+  #             preprocessing = preprocessing,
+  #             dist.type = dist.type,
+  #             dist.control = dist.control,
+  #             threshold = threshold,
+  #             simulation.control = simulation.control))
 
-  return(list(prediction.datasets = create.prediction.dataset.given.distance(dataCopy[,list(ans, surv.code = code, id)],
-                                                                             similarityTable$dist_table_w_code[intString %in% dataCopy[, ans] & dist <= threshold[2]],
-                                                                             similarityTable$dist_table_without_code[intString %in% dataCopy[, ans] & dist <= threshold[2]],
-                                                                             dict = coding_index_w_codes,
+  return(list(prediction.datasets = create.prediction.dataset.given.distance2(freq_table_WithCodingIndex,
+                                                                              freq_table_WithoutCodingIndex,
                                                                              K = num.allowed.codes, # no KldB categories + no special codes in training data
                                                                              n = simulation.control$n.draws,
                                                                              check.normality = simulation.control$check.normality),

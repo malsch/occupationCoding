@@ -4,9 +4,11 @@
 \alias{trainCreecysMemoryBasedReasoning}
 \title{Train Creecys Memory-based reaoning model}
 \usage{
-trainCreecysMemoryBasedReasoning(data, preprocessing = list(stopwords =
-  character(0), stemming = NULL, strPreprocessing = TRUE, removePunct =
-  TRUE))
+trainCreecysMemoryBasedReasoning(
+  data,
+  preprocessing = list(stopwords = character(0), stemming = NULL, strPreprocessing =
+    TRUE, removePunct = TRUE)
+)
 }
 \arguments{
 \item{data}{a data.table created with \code{\link{removeFaultyAndUncodableAnswers_And_PrepareForAnalysis}}}

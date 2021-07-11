@@ -5,12 +5,14 @@
 \name{occupations}
 \alias{occupations}
 \title{A selection of 250 coded occupational answers}
-\format{A data frame with 250 rows and 3 variables:
+\format{
+A data frame with 250 rows and 3 variables:
 \describe{
   \item{orig_answer}{verbal answer given to the first question about occupation}
   \item{orig_answer2}{verbal answer given to the second question about occupation (not used (much) in this package but it illustrates that this and several other variables are used by human coders)}
   \item{orig_code}{5-digit codes from the German classification of Occupation. Negative codes are not part of the official classification but were used for coding. -0030 refers to student assistants, -0004 means that the job description was not precise enough for coding.}
-}}
+}
+}
 \source{
 The following codes were hand-selected and double-checked to ensure anonymity: 71402 (50 cases), 71403 (20 cases), 63302 (20 cases), 83112 (25 cases), 83124 (25 cases), 83131 (20 cases), 83132 (20 cases), 83193 (15 cases), 83194 (5 cases), -0004 (25 cases), -0030 (25 cases)
 

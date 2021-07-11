@@ -22,6 +22,6 @@ Function replaces some common characters / character sequences (e.g., Ä, Ü, "D
 \code{\link{charToRaw}} helps to find UTF-8 characters.
 }
 \examples{
-(x <- c("Verkauf von B\\xfcchern, Schreibwaren", "Fach\\xe4rzin f\\xfcr Kinder- und Jugendmedizin im \\xf6ffentlichen Gesundheitswesen", "Industriemechaniker", "Dipl.-Ing. - Agrarwirtschaft (Landwirtschaft)"))
+(x <- c("Verkauf von B\xfcchern, Schreibwaren", "Fach\xe4rzin f\xfcr Kinder- und Jugendmedizin im \xf6ffentlichen Gesundheitswesen", "Industriemechaniker", "Dipl.-Ing. - Agrarwirtschaft (Landwirtschaft)"))
 stringPreprocessing(x)
 }

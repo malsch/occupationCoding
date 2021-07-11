@@ -4,8 +4,11 @@
 \alias{createSimilarityTableSubstring}
 \title{Similarity Table with Coding index}
 \usage{
-createSimilarityTableSubstring(unique.string, coding_index_w_codes,
-  coding_index_without_codes)
+createSimilarityTableSubstring(
+  unique.string,
+  coding_index_w_codes,
+  coding_index_without_codes
+)
 }
 \arguments{
 \item{unique.string}{a character vector (usually unique(answer))}

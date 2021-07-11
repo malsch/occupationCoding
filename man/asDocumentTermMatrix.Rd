@@ -4,9 +4,13 @@
 \alias{asDocumentTermMatrix}
 \title{Document-Term Matrix}
 \usage{
-asDocumentTermMatrix(input, vect.vocab = NULL,
-  stopwords = character(0), stemming = NULL, type = c("dgCMatrix",
-  "dgTMatrix", "lda_c"))
+asDocumentTermMatrix(
+  input,
+  vect.vocab = NULL,
+  stopwords = character(0),
+  stemming = NULL,
+  type = c("dgCMatrix", "dgTMatrix", "lda_c")
+)
 }
 \arguments{
 \item{input}{a character vector.}
@@ -35,14 +39,14 @@ asDocumentTermMatrix(x)
 asDocumentTermMatrix(x, type = "dgTMatrix")
 asDocumentTermMatrix(x, stopwords = tm::stopwords("de"))
 
-(x <- c("Verkauf von B\\xfcchern, Schreibwaren", "Fach\\xe4rzin f\\xfcr Kinder- und Jugendmedizin im \\xf6ffentlichen Gesundheitswesen", "Industriemechaniker", "Dipl.-Ing. - Agrarwirtschaft (Landwirtschaft)"))
+(x <- c("Verkauf von B\xfcchern, Schreibwaren", "Fach\xe4rzin f\xfcr Kinder- und Jugendmedizin im \xf6ffentlichen Gesundheitswesen", "Industriemechaniker", "Dipl.-Ing. - Agrarwirtschaft (Landwirtschaft)"))
 x <- stringPreprocessing(x)
 dtm <- asDocumentTermMatrix(x, stemming = "de")
 print(dtm$dtm)
 dimnames(dtm$dtm)[[2]]
 
 # use the newly created vocab_vectorizer
-(x <- stringPreprocessing(c("WILL NOT SHOW UP", "Verkauf von B\\xfcchern, Schreibwaren", "Fach\\xe4rzin f\\xfcr Kinder- und Jugendmedizin")))
+(x <- stringPreprocessing(c("WILL NOT SHOW UP", "Verkauf von B\xfcchern, Schreibwaren", "Fach\xe4rzin f\xfcr Kinder- und Jugendmedizin")))
 asDocumentTermMatrix(x, vect.vocab = dtm$vect.vocab, stopwords = character(0), stemming = "de")$dtm
 }
 \seealso{

@@ -4,8 +4,7 @@
 \alias{plotReliabilityDiagram}
 \title{Reliability Diagram}
 \usage{
-plotReliabilityDiagram(occupationalPredictions, k, num.codes,
-  filename = NULL)
+plotReliabilityDiagram(occupationalPredictions, k, num.codes, filename = NULL)
 }
 \arguments{
 \item{k}{how many top k categories to aggregate over?}

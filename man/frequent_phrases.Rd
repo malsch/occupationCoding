@@ -5,7 +5,9 @@
 \name{frequent_phrases}
 \alias{frequent_phrases}
 \title{Some job titles and job descriptions}
-\format{A character vector with 701 elements}
+\format{
+A character vector with 701 elements
+}
 \usage{
 frequent_phrases
 }

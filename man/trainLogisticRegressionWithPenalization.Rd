@@ -4,10 +4,11 @@
 \alias{trainLogisticRegressionWithPenalization}
 \title{Train a logistic regression model with penalization}
 \usage{
-trainLogisticRegressionWithPenalization(data,
-  preprocessing = list(stopwords = character(0), stemming = NULL,
-  countWords = FALSE), tuning = list(alpha = 0.05, maxit = 10^5, nlambda
-  = 100, thresh = 1e-07))
+trainLogisticRegressionWithPenalization(
+  data,
+  preprocessing = list(stopwords = character(0), stemming = NULL, countWords = FALSE),
+  tuning = list(alpha = 0.05, maxit = 10^5, nlambda = 100, thresh = 1e-07)
+)
 }
 \arguments{
 \item{data}{a data.table created with \code{\link{removeFaultyAndUncodableAnswers_And_PrepareForAnalysis}}}

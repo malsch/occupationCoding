@@ -5,14 +5,16 @@
 \name{coding_index_excerpt}
 \alias{coding_index_excerpt}
 \title{An excerpt from the Gesamtberufsliste der BA}
-\format{A data frame with 90 rows and 5 variables:
+\format{
+A data frame with 90 rows and 5 variables:
 \describe{
   \item{Berufsbenennungen}{neutral short title}
   \item{bezMale}{male long title}
   \item{bezFemale}{female long title}
   \item{Code}{Code from the German Classification of Occupations (KldB 2010)}
   \item{count_categories}{An indicator of job title ambiguity. Only used within function \code{\link{predictWithCodingIndex}}}
-}}
+}
+}
 \source{
 Bundesagentur für Arbeit (2019). Gesamtberufsliste der Bundesagentur für Arbeit. Stand: 03.01.2019. The \code{Gesamtberufsliste der BA} is available at \url{https://download-portal.arbeitsagentur.de/files/}.
 

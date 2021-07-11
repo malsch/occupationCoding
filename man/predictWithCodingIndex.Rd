@@ -4,8 +4,12 @@
 \alias{predictWithCodingIndex}
 \title{Code answers with a coding index}
 \usage{
-predictWithCodingIndex(newdata, coding_index, include.substrings = FALSE,
-  max.count.categories = Inf)
+predictWithCodingIndex(
+  newdata,
+  coding_index,
+  include.substrings = FALSE,
+  max.count.categories = Inf
+)
 }
 \arguments{
 \item{newdata}{eiter a data.table created with \code{\link{removeFaultyAndUncodableAnswers_And_PrepareForAnalysis}} or a character vector.}

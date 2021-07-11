@@ -4,8 +4,11 @@
 \alias{predictCreecysMemoryBasedReasoning}
 \title{Predict codes with Creecys Memory-based reaoning model}
 \usage{
-predictCreecysMemoryBasedReasoning(model, newdata,
-  tuning = list(k.neighbors = 12, metric = c("SUM", "ERROR", "MAX")))
+predictCreecysMemoryBasedReasoning(
+  model,
+  newdata,
+  tuning = list(k.neighbors = 12, metric = c("SUM", "ERROR", "MAX"))
+)
 }
 \arguments{
 \item{model}{the output created from \code{\link{trainCreecysMemoryBasedReasoning}}}
@@ -49,7 +52,7 @@ resMem <- predictCreecysMemoryBasedReasoning(memModel, splitted.data$test, tunin
 
 # Analyize predictions
 accuracy(resMem[, list(pred.code, pred.prob = confidence.score, acc = pred.code == code, num.suggested.codes = 1, num.suggested = 1, general.among.top5 = pred.code == "-9999", method.name = "Creecy.Sum.12")], n = n.test)
-plotTruePositivesVsFalsePositives(resMem[, list(pred.code, pred.prob = confidence.score, acc = pred.code == code, num.suggested.codes = 1, num.suggested = 1, general.among.top5 = pred.code == "-9999", method.name = "Creecy.Sum.12")])
+plotTruePredictionsVsFalsePredictions(resMem[, list(pred.code, pred.prob = confidence.score, acc = pred.code == code, num.suggested.codes = 1, num.suggested = 1, general.among.top5 = pred.code == "-9999", method.name = "Creecy.Sum.12")])
 plotAgreementRateVsProductionRate(resMem[, list(pred.code, pred.prob = confidence.score, acc = pred.code == code, num.suggested.codes = 1, num.suggested = 1, general.among.top5 = pred.code == "-9999", method.name = "Creecy.Sum.12")], n = n.test, yintercept = 0.85)
 
 #' #######################################################

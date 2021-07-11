@@ -21,7 +21,7 @@ Outputs the following descriptives: frequencies, mean, median, max of number of 
 data <- data.table(answers = c("LEITER VERTRIEB", "Kfz-Schlossermeister", "Aushilfe im Hotel(Bereich Housekeeping)", "Studentische Hilfskraft"),
                    codes = c("61194", "25213", "63221", "-0001"))
 (allowed.codes <- c("11101", "61194", "25213", "63221", "-0001"))
-(allowed.codes.titles <- c("Berufe in der Landwirtschaft (ohne Spezialisierung) - Helfer-/Anlernt\\xe4tigkeiten", "Berufe in der Kraftfahrzeugtechnik - komplexe Spezialistent\\xe4tigkeiten", "F\\xfchrungskräfte - Einkauf und Vertrieb", "Berufe im Hotelservice - Helfer-/Anlernt\\xe4tigkeiten", "a negative label (used for categories like 'student assistant' that are not in the official classification)"))
+(allowed.codes.titles <- c("Berufe in der Landwirtschaft (ohne Spezialisierung) - Helfer-/Anlernt\xe4tigkeiten", "Berufe in der Kraftfahrzeugtechnik - komplexe Spezialistent\xe4tigkeiten", "F\xfchrungskräfte - Einkauf und Vertrieb", "Berufe im Hotelservice - Helfer-/Anlernt\xe4tigkeiten", "a negative label (used for categories like 'student assistant' that are not in the official classification)"))
 data <- removeFaultyAndUncodableAnswers_And_PrepareForAnalysis(data, colNames = c("answers", "codes"), allowed.codes, allowed.codes.titles)
 createDescriptives(data)
 

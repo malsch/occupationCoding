@@ -24,7 +24,7 @@ The definition is: \eqn{similarity = (x \times y) / (||x|| \times ||y||) = (\sum
 }
 \examples{
 x <- c("Verkauf von Schreibwaren", "Verkauf", "Schreibwaren", "Industriemechaniker", "NOTINDOCUMENTTERMMATRIX")
-(y <- c("Verkauf von B\\xfcchern, Schreibwaren", "Fach\\xe4rzin f\\xfcr Kinder- und Jugendmedizin im \\xf6ffentlichen Gesundheitswesen", "Industriemechaniker", "Dipl.-Ing. - Agrarwirtschaft (Landwirtschaft)"))
+(y <- c("Verkauf von B\xfcchern, Schreibwaren", "Fach\xe4rzin f\xfcr Kinder- und Jugendmedizin im \xf6ffentlichen Gesundheitswesen", "Industriemechaniker", "Dipl.-Ing. - Agrarwirtschaft (Landwirtschaft)"))
 
 tok_fun = text2vec::word_tokenizer
 it_train = text2vec::itoken(tolower(y), tokenizer = tok_fun, progressbar = FALSE)

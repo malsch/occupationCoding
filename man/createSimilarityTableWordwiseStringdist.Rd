@@ -4,10 +4,14 @@
 \alias{createSimilarityTableWordwiseStringdist}
 \title{Wordwise Similarity Table with Coding index}
 \usage{
-createSimilarityTableWordwiseStringdist(unique.string,
-  coding_index_w_codes, coding_index_without_codes, preprocessing,
-  dist.control = list(method = "osa", weight = c(d = 1, i = 1, s = 1, t =
-  1)), threshold = 1)
+createSimilarityTableWordwiseStringdist(
+  unique.string,
+  coding_index_w_codes,
+  coding_index_without_codes,
+  preprocessing,
+  dist.control = list(method = "osa", weight = c(d = 1, i = 1, s = 1, t = 1)),
+  threshold = 1
+)
 }
 \arguments{
 \item{unique.string}{a character vector (usually unique(answer))}

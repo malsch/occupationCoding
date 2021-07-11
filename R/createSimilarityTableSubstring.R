@@ -16,6 +16,8 @@
 #'   \item{dist_table_without_code}{\code{NULL} or a data.table with colummns \code{intString}, \code{dictString}, \code{dist}}
 #'   \item{vect_vocab}{see \code{link{asDocumentTermMatrix}}}
 #' }
+#' 
+#' @export
 #'
 #' @examples
 #' ## Prepare coding index

@@ -8,8 +8,9 @@ Description: Occupation Coding refers to coding short verbal texts (survey answe
     into an occupational classification. This package implements several supervised learning
     techniques to simplify its automation. More details can be found in an upcoming publication.
     See predict-functions for some examples of what this package can do.
+Depends: R (>= 3.5.0)
 License: GPL-3
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
 Encoding: UTF-8
 LazyData: true
 IMPORTS:

@@ -4,35 +4,40 @@
 \alias{trainSimilarityBasedReasoning}
 \title{Train Similarity Based Probability Model}
 \usage{
-trainSimilarityBasedReasoning(data, coding_index_w_codes,
-  coding_index_without_codes, preprocessing = list(stopwords =
-  tm::stopwords("de"), stemming = NULL, strPreprocessing = TRUE,
-  removePunct = FALSE), dist.type = c("wordwise", "substring",
-  "fulltext"), dist.control = list(method = "osa", weight = c(d = 1, i =
-  1, s = 1, t = 1)), threshold = c(max = 3, use = 1),
+trainSimilarityBasedReasoning(
+  data,
+  coding_index_w_codes,
+  coding_index_without_codes,
+  preprocessing = list(stopwords = tm::stopwords("de"), stemming = NULL,
+    strPreprocessing = TRUE, removePunct = FALSE),
+  dist.type = c("wordwise", "substring", "fulltext"),
+  dist.control = list(method = "osa", weight = c(d = 1, i = 1, s = 1, t = 1)),
+  threshold = c(max = 3, use = 1),
   simulation.control = list(n.draws = 250, check.normality = FALSE),
-  tmp_folder = "similarityTables")
+  tmp_folder = "similarityTables"
+)
 }
 \arguments{
 \item{data}{a data.table created with \code{\link{removeFaultyAndUncodableAnswers_And_PrepareForAnalysis}}}
 
 \item{coding_index_w_codes}{a data.table with columns
 \describe{
-  \item{title}{a character vector, a preprocessed character vector with entries from the coding index.}
+  \item{bezMale}{a character vector, contains masculine job titles from the coding index.}
+  \item{bezFemale}{a character vector, contains feminine job titles from the coding index.}
   \item{Code}{a character vector with associated classification codes.}
 }}
 
-\item{coding_index_without_codes}{a preprocessed character vector, similar to \code{coding_index_w_codes$title}.}
+\item{coding_index_without_codes}{a preprocessed character vector, meant for \code{\link{frequent_phrases}}}
 
 \item{preprocessing}{a list with elements
 \describe{
   \item{stopwords}{a character vector, use \code{tm::stopwords("de")} for German stopwords. Only used if \code{dist.type = "wordwise"}.}
-  \item{stemming}{\code{NULL} for no stemming and \code{"de"} for stemming using the German porter stemmer. Do not use unless the \code{coding_index$title} was stemmed.}
+  \item{stemming}{\code{NULL} for no stemming and \code{"de"} for stemming using the German porter stemmer. Do not use unless the job titles in \code{coding_index_w_codes} were stemmed.}
   \item{strPreprocessing}{\code{TRUE} if \code{\link{stringPreprocessing}} shall be used.}
   \item{removePunct}{\code{TRUE} if \code{\link[tm]{removePunctuation}} shall be used.}
 }}
 
-\item{dist.type}{How to calculate similarity between entries from both coding_indices and verbal answers from the survey? Three options are currently supported.
+\item{dist.type}{How to calculate similarity between entries from both coding_indices and verbal answers from the survey? Three options are currently supported. Since we use the \code{\link[stringdist]{stringdist}}-function excessively, one could easily extend the functionality of this procedure to other distance metrics.
 \describe{
   \item{dist.type = "fulltext"}{Uses the \code{\link[stringdist]{stringdist}}-function directly after preprocessing to calculate distances. (the simplest approach but least useful.)}
   \item{dist.type = "substring"}{An entry from the coding index and a verbal answer are similar if the entry from the coding index is a substring of the verbal answer.}
@@ -41,7 +46,7 @@ trainSimilarityBasedReasoning(data, coding_index_w_codes,
 
 \item{dist.control}{If \code{dist.type = "fulltext"} or \code{dist.type = "wordwise"} the entries from this list will be passed to \code{\link[stringdist]{stringdist}}. Currently only two possible entries are supported (method = "osa", weight = c(d = 1, i = 1, s = 1, t = 1) is recommended), but one could easily extend the functionality.}
 
-\item{threshold}{A numeric vector with two elements. If \code{dist.type = "fulltext"} or \code{dist.type = "wordwise"}, the treshold determines up to which distance a verbal answer and an entry from the coding index are similar. The second number is actually used for this. The first number should be identical or larger than the second number. It is only used to speed up similarity calculations.}
+\item{threshold}{A numeric vector with two elements. If \code{dist.type = "fulltext"} or \code{dist.type = "wordwise"}, the threshold determines up to which distance a verbal answer and an entry from the coding index are similar. The second number actually gets used. The first number is only used to speed up similarity calculations. It should be identical or larger than the second number.}
 
 \item{simulation.control}{a list with two components,
 \describe{
@@ -49,7 +54,7 @@ trainSimilarityBasedReasoning(data, coding_index_w_codes,
   \item{check.normality}{We would like that the hyperprior distribution is normal. Set check.normality to TRUE to do some diagnostics about this.}
 }}
 
-\item{tmp_folder}{The name of a folder where the algorithm will store the results from similarity calculations. Links between verbal answers and coding indices are only stored if the distance is \code{<= threshold[1]}}
+\item{tmp_folder}{The name of a folder where the algorithm will store the results from similarity calculations. Use any folder you like. Links between verbal answers and coding indices are only stored if the distance is \code{<= threshold[1]}}
 }
 \value{
 a list with components
@@ -67,16 +72,7 @@ a list with components
 \description{
 For each entry in the coding index, look up how answers that are similar to the coding index were coded in training data and calculate probabilities.
 }
-\details{
-Since we use the \code{\link[stringdist]{stringdist}}-function excessively, one could easily extend
-}
 \examples{
-###############################################
-load frequent_phrases that are not part of the coding index (should contain words that are meaningful for occupation coding)
-(manually created in files Z:/Eigene Dateien/in work/Analysis to prepare interview coding/v_6_prediction_with_dictionary_and_training_data_using_dictionary_information AND Z:/Eigene Dateien/in work/Analysis to prepare interview coding/data_preparation_model_estimation_for_AWS.r)
-#############################################
-load("Z:/Eigene Dateien/in work/Algorithms for Occupation Coding/data/freqent_phrases_prepared_from_ALWA_PASS_BIBB_KIGGS_GEDA_with_privacy_restriction.RData")
-
 # set up data
 data(occupations)
 allowed.codes <- c("71402", "71403", "63302", "83112", "83124", "83131", "83132", "83193", "83194", "-0004", "-0030")
@@ -96,7 +92,9 @@ simBasedModel <- trainSimilarityBasedReasoning(data = proc.occupations,
                               tmp_folder = "similarityTables")
 }
 \seealso{
-See \code{\link{predictSimilarityBasedReasoning}} for more examples and recommended settings.
+See \code{\link{predictSimilarityBasedReasoning}} for more examples and recommended settings. See \code{\link{trainSimilarityBasedReasoning2}} for the same functionality, but using aggregated (anonymized!) training data. German training data are available.
 
 \code{\link{createSimilarityTableWordwiseStringdist}}, \code{\link{createSimilarityTableSubstring}}, \code{\link{createSimilarityTableStringdist}} for implementations of the different \code{dist.type}. \code{\link{frequent_phrases}} is a character vector with frequent German answers.
+
+Schierholz, Malte (2019): New methods for job and occupation classification. Dissertation, Mannheim. \url{https://madoc.bib.uni-mannheim.de/50617/}, pp. 206-208 and p. 268, pp. 308-320
 }

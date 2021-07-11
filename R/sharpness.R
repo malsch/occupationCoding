@@ -4,7 +4,7 @@
 #'
 #' Sharpness is zero (optimal) if a single category is predicted with probability 1. It is maximal if all categories have equal probability \eqn{p = \frac{1}{K}}
 #'
-#' Note: What should be done if a predicted probability is zero? \eqn{0 \times log(0)} is not defined but necessary to calculate sharpness. We set {0 \times log(0) = 0}. This also means we exclude observations from our analysis if all probabilities are predicted as zero. An alternative could be to set such zeros to \eqn{1/k)}, which would lead to very different sharpness.
+#' Note: What should be done if a predicted probability is zero? \eqn{0 \times log(0)} is not defined but necessary to calculate sharpness. We set \eqn{0 \times log(0) = 0}. This also means we exclude observations from our analysis if all probabilities are predicted as zero. An alternative could be to set such zeros to \eqn{1/k)}, which would lead to very different sharpness.
 #'
 #' @param occupationalPredictions a data.table created with a \code{\link{expandPredictionResults}}-function from this package.
 #'

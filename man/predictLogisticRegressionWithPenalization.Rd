@@ -4,8 +4,11 @@
 \alias{predictLogisticRegressionWithPenalization}
 \title{Predict codes using a logistic regression model}
 \usage{
-predictLogisticRegressionWithPenalization(model, newdata,
-  lambda = min(model$lambda))
+predictLogisticRegressionWithPenalization(
+  model,
+  newdata,
+  lambda = min(model$lambda)
+)
 }
 \arguments{
 \item{model}{the output created from \code{\link{trainLogisticRegressionWithPenalization}}}
