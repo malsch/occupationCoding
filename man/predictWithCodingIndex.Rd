@@ -12,13 +12,13 @@ predictWithCodingIndex(
 )
 }
 \arguments{
-\item{newdata}{eiter a data.table created with \code{\link{removeFaultyAndUncodableAnswers_And_PrepareForAnalysis}} or a character vector.}
+\item{newdata}{either a data.table created with \code{\link{removeFaultyAndUncodableAnswers_And_PrepareForAnalysis}} or a character vector.}
+
+\item{coding_index}{a data.table as created with function \code{\link{prepare_German_coding_index_Gesamtberufsliste_der_BA}}}
 
 \item{include.substrings}{(default: \code{FALSE}). If \code{FALSE}, a match is found if, after preprocessing, the entry from the coding index and the string-element are exactly identical. If TRUE (Attention: THIS IS SLOW!!), a match is found if, after preprocessing, the entry from the coding index is a substring of the string-element.}
 
 \item{max.count.categories}{(default: \code{Inf}). Should we search the whole coding index (default) or should we exclude entries with large \code{count_categories}, an indicator of job title ambiguity? Only entries in the coding index with \code{count_categories \eqn{\le} max.count.categories} are searched.}
-
-\item{path_to_coding_index}{file path to a coding index that needs to be formatted in a specific way.}
 }
 \value{
 a data.table with columns id, ans, and pred.code (format is not comparable to other formats in this package.)
@@ -58,6 +58,4 @@ res[nchar(pred.code) == 5, mean(pred.code == code)]
 }
 \seealso{
 \code{\link{predictSimilarityBasedReasoning}}
-
-Schierholz, M. (unpublished). Discussion Paper
 }

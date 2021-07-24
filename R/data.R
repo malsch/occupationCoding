@@ -18,6 +18,21 @@
 #' @encoding UTF-8
 "occupations"
 
+#' 2010 German Classification of Occupations (KldB 2010)
+#'
+#' This file contains the labels for all 1286 five-digit categories (Berufsgattungen) from the 2010 German Classification of Occupations. Five additional categories were added for coding purposes: (-0030 = Studentische Hilfskraft, -0004 = Berufsbeschreibung zu unpräzise/nicht kodierbar, -0006 = Mehrere Jobs, -0012 = Arbeiter/in (nicht näher spezifiziert), -0019 = Freiwilligendienst, FSJ, Zivildienst)
+#' 
+#' #' @format A data frame with 2 variables:
+#' \describe{
+#'   \item{code}{5-digit number (Berufsgattung)}
+#'   \item{title}{Category label}
+#' }
+#' @source
+#' Federal Employment Agency (2011). Klassifikation der Berufe 2010, Bundesagentur für Arbeit, Nuremberg.
+#' 
+#' @encoding UTF-8
+"kldb2010PlusFive"
+
 #' An excerpt from the Gesamtberufsliste der BA
 #'
 #' 90 selected job titles from the \code{Gesamtberufsliste der BA}. This dataset is not complete and only used to demonstrate the functionality of the package. We recommend that users build their own coding index. \code{\link{prepare_German_coding_index_Gesamtberufsliste_der_BA}} can be used to build a German coding index.

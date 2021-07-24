@@ -2,15 +2,13 @@
 #'
 #' Look up the correct code in a coding index. We often find no code, 1 code or even more than one possible code this way.
 #'
-#' @param newdata eiter a data.table created with \code{\link{removeFaultyAndUncodableAnswers_And_PrepareForAnalysis}} or a character vector.
-#' @param path_to_coding_index file path to a coding index that needs to be formatted in a specific way.
+#' @param newdata either a data.table created with \code{\link{removeFaultyAndUncodableAnswers_And_PrepareForAnalysis}} or a character vector.
+#' @param coding_index a data.table as created with function \code{\link{prepare_German_coding_index_Gesamtberufsliste_der_BA}}
 #' @param include.substrings (default: \code{FALSE}). If \code{FALSE}, a match is found if, after preprocessing, the entry from the coding index and the string-element are exactly identical. If TRUE (Attention: THIS IS SLOW!!), a match is found if, after preprocessing, the entry from the coding index is a substring of the string-element.
 #' @param max.count.categories (default: \code{Inf}). Should we search the whole coding index (default) or should we exclude entries with large \code{count_categories}, an indicator of job title ambiguity? Only entries in the coding index with \code{count_categories \eqn{\le} max.count.categories} are searched.
 #'
 #' @seealso
 #' \code{\link{predictSimilarityBasedReasoning}}
-#'
-#' Schierholz, M. (unpublished). Discussion Paper
 #'
 #' @return a data.table with columns id, ans, and pred.code (format is not comparable to other formats in this package.)
 #' @export
