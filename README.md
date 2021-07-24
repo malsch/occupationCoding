@@ -168,7 +168,7 @@ To be comparable with results from Schierholz (2019) and Schierholz and Schonlau
 | Combining Models: Second Strategy (Maximum Probability) | 52.91 |
 | Best algorithm (Schierholz and Schonlau) | 56.20 |
 
-The performance from ``Substring Similiarity`` and ``Wordwise Similiarity`` is exactly identical to the performance reported in Schierholz (2019). This is despite minor changes in the training data to anonymize it and shows that the anonymization process has no effect on the performance.
+The performance from ``Substring Similiarity`` and ``Wordwise Similiarity`` is exactly identical to the performance reported in Schierholz (2019). This is despite minor changes in the training data to anonymize it and shows that the anonymization process has no effect on the performance. Likewise, any updates in the coding index ``Gesamtberufsliste_der_BA.xlsx`` have little effect for the algorithms presented here (two versions were tested: the older version was released in January 2019 and contained almost 28,000 job titles; the newer version was released in July 2021 and contains a little less than 19,000 job titles)
 
 Small improvements are achieved when combining models, and the second strategy to do so accomplishes higher agreement rates. However, Schierholz (2019) reported an even higher agreement rate for the Maximum Probability algorithm. This is because he combined both with a third model, which has not been used here, because improvements are rather small.
 
