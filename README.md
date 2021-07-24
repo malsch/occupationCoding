@@ -31,7 +31,7 @@ coding_index_w_codes <- prepare_German_coding_index_Gesamtberufsliste_der_BA(pat
                                   count.categories = FALSE)
 ```
 
-Imagine five persons from your survey answered as follows. You wish to code these answers according to the [2010 German Classification of Occupation](https://statistik.arbeitsagentur.de/DE/Navigation/Grundlagen/Klassifikationen/Klassifikation-der-Berufe/KldB2010/KldB2010-Nav.html).
+Imagine five persons from your survey answered as follows. We wish to code these answers according to the [2010 German Classification of Occupation](https://statistik.arbeitsagentur.de/DE/Navigation/Grundlagen/Klassifikationen/Klassifikation-der-Berufe/KldB2010/KldB2010-Nav.html).
 
 ``` r
 text_input <- c("Bürokauffrau", "Stadtjugendpfleger", "Erzieherhelfer im Lehrlingswohnheim.", 
@@ -108,14 +108,16 @@ resCombined[, head(.SD[order(pred.prob, decreasing = TRUE)], 2), by = id]
 ## Note that the code `-9999` has a special meaning: It is always predicted with very low pred.prob and stands for all codes that have no evidence of being appropriate. Consider the second answer: There are 1291 allowed codes in the target classification used here. Code 83124 has probability 0.67 and every other code has probability 0.000256, for a total probability of 0.67 + 1290 * 0.000256 = 1.
 ```
 
-I expect there are two main use cases for this algorithm: automated coding and computer-assisted coding. With (semi-)automated coding, the computer automatically selects the code that it finds to be most likely (at least if ``pred.prob`` is above a user-defined threshold). The code for semi-automated coding would look something like this:
+I expect there are two main use cases for this algorithm: *(semi-)automated coding* and *computer-assisted coding*.
+
+With *(semi-)automated coding*, the computer automatically selects the code that it finds to be most likely (at least if ``pred.prob`` is above a user-defined threshold). The code for semi-automated coding would look something like this:
 
 ``` r
 threshold <- 0.8 # only for demonstration purposes
 resCombined[, .SD[which.max(pred.prob), list(ans, predicted = ifelse(pred.prob > threshold, pred.code, "no prediction"), pred.prob)], by = id]
 ```
 
-With computer-assisted coding, the computer suggests a number of codes (say, 5) and a human coder would select the most appropriate one from the list of suggestions. Building a user interface to support this mode of coding is beyond the scope of this package.
+With *computer-assisted coding*, the computer suggests a number of codes (say, 5) and a human coder would select the most appropriate one from the suggested list. For this mode, a well-designed user interface would facilitate the human work enormously, but this is beyond the scope of this package.
 
 ### For Programmers
 
