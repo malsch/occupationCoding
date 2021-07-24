@@ -22,7 +22,7 @@ Applied German users will also want to download the file ``Gesamtberufsliste_der
 
 ### For Applied Users (German only, coding according to the 2010 German Classification of Occupation)
 
-We first demonstrate how to code answers using the Alphabetical Dictionary (algorithm 1 in the paper). A better algorithm to use is Similarity-based Reasoning, shown afterwards (not included in the paper, due to space restrictions).
+We first demonstrate how to code answers using the Alphabetical Dictionary (algorithm 1 in the paper). A better and highly recommended algorithm is Similarity-based Reasoning, shown afterwards (not included in the paper, due to space restrictions). It is evaluated at the bottom of this page.
 
 To prepare, load the coding index ``Gesamtberufsliste_der_BA.xlsx`` first. Enter the path were you saved ``Gesamtberufsliste_der_BA.xlsx``.
 ``` r
@@ -31,7 +31,8 @@ coding_index_w_codes <- prepare_German_coding_index_Gesamtberufsliste_der_BA(pat
                                   count.categories = FALSE)
 ```
 
-Imagine five persons from your survey answered as follows. You wish to code these answers according to the [2010 German Classification of Occupation](https://statistik.arbeitsagentur.de/DE/Navigation/Grundlagen/Klassifikationen/Klassifikation-der-Berufe/KldB2010/KldB2010-Nav.html). The 2020 update is not supported (yet).
+Imagine five persons from your survey answered as follows. You wish to code these answers according to the [2010 German Classification of Occupation](https://statistik.arbeitsagentur.de/DE/Navigation/Grundlagen/Klassifikationen/Klassifikation-der-Berufe/KldB2010/KldB2010-Nav.html).
+
 ``` r
 text_input <- c("Bürokauffrau", "Stadtjugendpfleger", "Erzieherhelfer im Lehrlingswohnheim.", 
                 "Mitarbeit bei einer Filmproduktion", "Abschleifer")
@@ -125,6 +126,8 @@ To get started, run the example code in ``?predictLogisticRegressionWithPenaliza
 If you know the algorithm you want to use, look at the examples of the ``predict``-function for this algorithm (e.g., ``?predictXgboost``).
 
 Additional algorithms not mentioned in the paper are described in my dissertation at https://madoc.bib.uni-mannheim.de/50617/ The example code in ``?selectMaxProbMethod`` is a good start to see these algorithms at work. This function implements the ``Maximum Probability Algorithm`` (algorithm 10 in the dissertation and just a different implementation of Similarity-based Reasoning as shown above).
+
+## Evaluation
 
 ## References
 
