@@ -44,18 +44,8 @@ text_input <- c("Bürokauffrau", "Stadtjugendpfleger", "Erzieherhelfer im Lehrli
 
 This was easy. Schierholz (2019, pp. 206-208) suggests an alternative method, which yields far better results. His technique relies on anonymized training data from various surveys (Antoni et al., 2010; Rohrbach-Schmidt and Hall, 2013; Lange et al., 2017; Hoffmann et al., 2018; Trappmann et al. 2010), which are provided as part of this package. 
 
-Training the model (results are actually even better when we use two models) will take several minutes ...
+Training the model will take several minutes ...
 ``` r
-simBasedModelSubstring <- trainSimilarityBasedReasoning2(anonymized_data = surveyCountsSubstringSimilarity,
-                                                         num.allowed.codes = 1291,
-                                                         coding_index_w_codes = coding_index_w_codes,
-                                                         preprocessing = list(stopwords = NULL, stemming = NULL, strPreprocessing = TRUE, removePunct = FALSE),
-                                                         dist.type = "substring",
-                                                         dist.control = NA,
-                                                         threshold = NA,
-                                                         simulation.control = list(n.draws = 250, check.normality = FALSE)
-                                                         )
-                                                         
 simBasedModelWordwise <- trainSimilarityBasedReasoning2(anonymized_data = surveyCountsWordwiseSimilarity,
                                                          num.allowed.codes = 1291,
                                                          coding_index_w_codes = coding_index_w_codes,
@@ -65,12 +55,56 @@ simBasedModelWordwise <- trainSimilarityBasedReasoning2(anonymized_data = survey
                                                          threshold = c(max = NA, use = 1),
                                                          simulation.control = list(n.draws = 250, check.normality = FALSE)
 )
-
+simBasedModelSubstring <- trainSimilarityBasedReasoning2(anonymized_data = surveyCountsSubstringSimilarity,
+                                                         num.allowed.codes = 1291,
+                                                         coding_index_w_codes = coding_index_w_codes,
+                                                         preprocessing = list(stopwords = NULL, stemming = NULL, strPreprocessing = TRUE, removePunct = FALSE),
+                                                         dist.type = "substring",
+                                                         dist.control = NA,
+                                                         threshold = NA,
+                                                         simulation.control = list(n.draws = 250, check.normality = FALSE)
+                                                         )
 ```
+Now predict possible codes
+``` r
+resWordwise <- predictSimilarityBasedReasoning(simBasedModelWordwise, text_input)
+resSubstring <- predictSimilarityBasedReasoning(simBasedModelSubstring, text_input)
+```
+
+We actually trained two different models. We could now use either one, but the results become better if we combine them. If the output from one model makes poor predictions (that is, if the five most likeliest categories have a chance less than 50% to be correct), we simply use the other.
 
 ``` r
-
+wordwiseModelUsefulIds <- resWordwise[, .(prob = sum(head(.SD[order(pred.prob, decreasing = TRUE), pred.prob], 5))), by = id][prob > 0.5, id]
+resCombined <- rbind(resWordwise[id %in% wordwiseModelUsefulIds], resSubstring[!(id %in% wordwiseModelUsefulIds)])[order(id)]
 ```
+
+Let's look at the results again. The two most probable codes for each answer are shown here. The algorithm is rather convinced of its predictions for answers 1 and 3, it has some confidence in its predictions for answers 2 and 5, but for answer 4 even the most likeliest code has just a 7% chance to be correct.
+
+``` r
+resCombined[, head(.SD[order(pred.prob, decreasing = TRUE)], 2), by = id]
+##    id pred.code    pred.prob                                  ans
+## 1:  1     71402 0.8928066326                         Bürokauffrau
+## 2:  1     72213 0.0200043173                         Bürokauffrau
+## 3:  2     83124 0.6698570028                   Stadtjugendpfleger
+## 4:  2     -9999 0.0002560075                   Stadtjugendpfleger
+## 5:  3     83112 0.8308403476 Erzieherhelfer im Lehrlingswohnheim.
+## 6:  3     83132 0.0237893319 Erzieherhelfer im Lehrlingswohnheim.
+## 7:  4     43423 0.0744033856   Mitarbeit bei einer Filmproduktion
+## 8:  4     71393 0.0488194384   Mitarbeit bei einer Filmproduktion
+## 9:  5     24222 0.5933915448                          Abschleifer
+##10:  5     -9999 0.0003152365                          Abschleifer
+
+## Note that the code `-9999` has a special meaning: It is always predicted with very low pred.prob and stands for all codes that have no evidence of being appropriate. Consider the second answer: There are 1291 allowed codes in the target classification used here. Code 83124 has probability 0.67 and every other code has probability 0.000256, for a total probability of 0.67 + 1290 * 0.000256 = 1.
+```
+
+I expect there are two main use cases for this algorithm: automated coding and computer-assisted coding. With (semi-)automated coding, the computer automatically selects the code that it finds to be most likely (at least if ``pred.prob`` is above a user-defined threshold). The code for semi-automated coding would look something like this:
+
+``` r
+threshold <- 0.8 # only for demonstration purposes
+resCombined[, .SD[which.max(pred.prob), list(ans, predicted = ifelse(pred.prob > threshold, pred.code, "no prediction"), pred.prob)], by = id]
+```
+
+With computer-assisted coding, the computer suggests a number of codes (say, 5) and a human coder would select the most appropriate one from the list of suggestions. Building a user interface to support this mode of coding is beyond the scope of this package.
 
 ### For Programmers
 
@@ -81,8 +115,6 @@ To get started, run the example code in ``?predictLogisticRegressionWithPenaliza
 If you know the algorithm you want to use, look at the examples of the ``predict``-function for this algorithm (e.g., ``?predictXgboost``).
 
 Additional algorithms not mentioned in the paper are described in my dissertation at https://madoc.bib.uni-mannheim.de/50617/ The example code in ``?selectMaxProbMethod`` is a good start to see these algorithms at work. This function implements the ``Maximum Probability Algorithm`` (algorithm 10 in the dissertation).
-
-German users who wish to do coding into the German Classification of Occupation 2010 (KldB 2010) with a coding index should look at ``?prepare_German_coding_index_Gesamtberufsliste_der_BA`` and ``?predictWithCodingIndex``.
 
 ## References
 
