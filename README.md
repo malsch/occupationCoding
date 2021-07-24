@@ -82,10 +82,18 @@ resWordwise <- predictSimilarityBasedReasoning(simBasedModelWordwise, text_input
 resSubstring <- predictSimilarityBasedReasoning(simBasedModelSubstring, text_input)
 ```
 
-We actually trained two different models. We could now use either one, but the results become better if we combine them. If the output from one model makes poor predictions (that is, if the five most likeliest categories have a chance less than 50% to be correct), we simply use the other.
+We actually trained two different models. We could now use either one, but the results become better if we combine them. If the output from one model makes poor predictions, we simply use the other.
 
 ``` r
+## first way of combining both models: if the five most likeliest categories from resWordwise have a chance less than 50% to be correct
 wordwiseModelUsefulIds <- resWordwise[, .(prob = sum(head(.SD[order(pred.prob, decreasing = TRUE), pred.prob], 5))), by = id][prob > 0.5, id]
+
+## second way of combining both models: select for each id the prediction method which returns highest probability (see function selectMaxProbMethod)
+wordwiseProb <- resWordwise[, .SD[which.max(pred.prob), .(wordwiseProb = pred.prob)], by = id]$wordwiseProb
+substringProb<- resSubstring[, .SD[which.max(pred.prob), .(substringProb = pred.prob)], by = id]$substringProb
+wordwiseModelUsefulIds <- which(wordwiseProb > substringProb)
+
+# the second way actually is a little bit better
 resCombined <- rbind(resWordwise[id %in% wordwiseModelUsefulIds], resSubstring[!(id %in% wordwiseModelUsefulIds)])[order(id)]
 ```
 
