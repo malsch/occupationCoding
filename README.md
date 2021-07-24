@@ -139,6 +139,41 @@ Additional algorithms not mentioned in the paper are described in my dissertatio
 
 ## Evaluation
 
+Here is a short example code to evaluate how well *Similarity-based Reasoning* works with new data. Simply replace the data set ``occupations`` with your own data and adjust the number of observations ``n``.
+
+``` r
+n <- 250 # number of observations
+proc.occupations <- removeFaultyAndUncodableAnswers_And_PrepareForAnalysis(occupations, colNames = c("orig_answer", "orig_code"), allowed.codes, allowed.codes.titles)
+
+# make predictions
+resWordwise2 <- expandPredictionResults(predictSimilarityBasedReasoning(simBasedModelWordwise, proc.occupations), allowed.codes = kldb2010PlusFive$code, method.name = "wordwiseSimilarityOsa1111")
+resSubstring2 <- expandPredictionResults(predictSimilarityBasedReasoning(simBasedModelSubstring, proc.occupations), allowed.codes = kldb2010PlusFive$code, method.name = "substringSimilarity")
+
+# second way of combining both models
+res.combined <- rbind(resWordwise2, resSubstring2); class(res.combined) <- class(resWordwise2)
+res.max <- selectMaxProbMethod(res.combined, combined.methods = c("wordwiseSimilarityOsa1111", "substringSimilarity"), k = 1, new.method.name = "maxProbAmong1")
+res.combined <- rbind(res.combined, res.max); class(res.combined) <- class(resWordwise2)
+
+# and create a set of results
+produceResults(res.combined, k = 1, n = n, num.codes = 1291)
+```
+
+To be comparable with results from Schierholz (2019) and Schierholz and Schonlau (forthcoming), this code was tested with what they call dataset E. Here are the results:
+
+| Method | Agreement Rate (%) at 100% Production Rate |
+| -------- | -------------- |
+| Substring Similiarity | 50.56 |
+| Wordwise Similiarity | 48.31 |
+| Combining Models: First Strategy (Sequential) | 51.79 |
+| Combining Models: Second Strategy (Maximum Probability) | 52.91 |
+| Best algorithm (Schierholz and Schonlau) | 56.20 |
+
+The performance from ``Substring Similiarity`` and ``Wordwise Similiarity`` is exactly identical to the performance reported in Schierholz (2019). This is despite minor changes in the training data to anonymize it and shows that the anonymization process has no effect on the performance.
+
+Small improvements are achieved when combining models, and the second strategy to do so accomplishes higher agreement rates. However, Schierholz (2019) reported an even higher agreement rate for the Maximum Probability algorithm. This is because he combined both with a third model, which has not been used here, because improvements are rather small.
+
+With the data provided here, the performance is nearly as good as the best algorithm reported by Schierholz and Schonlau (forthcoming). Privacy considerations hindered the provision of the best performing algorithm. Given the small gap between both, this appears bearable, as it is certainly worth to make the algorithms publicly available to the survey research community.
+
 ## References
 
 - Antoni, M., Drasch, K., Kleinert, C., Matthes, B., Ruland, M. and Trahms, A. (2010): Arbeiten und Lernen im Wandel * Teil 1: Überblick über die Studie, FDZ-Methodenreport 05/2010, Forschungsdatenzentrum der Bundesagentur für Arbeit im Institut für Arbeitsmarkt- und Berufsforschung, Nuremberg.
