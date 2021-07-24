@@ -16,23 +16,31 @@ install.packages("devtools")
 devtools::install_github("malsch/occupationCoding")
 ```
 
-Applied German users will also want to download the file ``Gesamtberufsliste_der_BA.xlsx`` from https://download-portal.arbeitsagentur.de/ (requires free registration)
+Applied German users will also want to download the file ``Gesamtberufsliste_der_BA.xlsx`` from https://download-portal.arbeitsagentur.de/ (requires free registration).
 
 ## Usage
 
-### For Applied Users (German only, coding according to the 2010 German classification of occupation)
+### For Applied Users (German only, coding according to the 2010 German Classification of Occupation)
 
-Load the coding index ``Gesamtberufsliste_der_BA.xlsx`` first.
+We first demonstrate how to code answers using the Alphabetical Dictionary (algorithm 1 in the paper). A better algorithm to use is Similarity-based Reasoning, shown afterwards (not included in the paper, due to space restrictions).
+
+To prepare, load the coding index ``Gesamtberufsliste_der_BA.xlsx`` first. Enter the path were you saved ``Gesamtberufsliste_der_BA.xlsx``.
 ``` r
-path_to_file <- "./Gesamtberufsliste_der_BA.xlsx" # change path
-try({coding_index_w_codes <- prepare_German_coding_index_Gesamtberufsliste_der_BA(path_to_file, 
-                                  count.categories = FALSE)}, silent = TRUE)
+path_to_file <- "./Gesamtberufsliste_der_BA.xlsx" # change path 
+coding_index_w_codes <- prepare_German_coding_index_Gesamtberufsliste_der_BA(path_to_file, 
+                                  count.categories = FALSE)
 ```
 
-Consult the coding index. For typical survey data, there is an entry in the coding index for about ~45% of all answers. In rare cases, when the same job title is used in different industries, there is more than one entry in the processed coding index.
+Imagine five persons from your survey answered as follows. You wish to code these answers according to the [2010 German Classification of Occupation](https://statistik.arbeitsagentur.de/DE/Navigation/Grundlagen/Klassifikationen/Klassifikation-der-Berufe/KldB2010/KldB2010-Nav.html). The 2020 update is not supported (yet).
 ``` r
 text_input <- c("Bürokauffrau", "Stadtjugendpfleger", "Erzieherhelfer im Lehrlingswohnheim.", 
                 "Mitarbeit bei einer Filmproduktion", "Abschleifer")
+```
+
+*Coding with the Alphabetical Dictionary*
+
+Consult the coding index. For typical survey data, there is an entry in the coding index for about ~45% of all answers. In rare cases, when the same job title is used in various industries, there is more than one entry in the processed coding index.
+``` r
 (res <- predictWithCodingIndex(text_input, coding_index = coding_index_w_codes))
 ##    id                                  ans pred.code
 ## 1:  1                         Bürokauffrau     71402
@@ -42,9 +50,11 @@ text_input <- c("Bürokauffrau", "Stadtjugendpfleger", "Erzieherhelfer im Lehrli
 ## 5:  5                          Abschleifer 24222,21212
 ```
 
-This was easy. Schierholz (2019, pp. 206-208) suggests an alternative method, which yields far better results. His technique relies on anonymized training data from various surveys (Antoni et al., 2010; Rohrbach-Schmidt and Hall, 2013; Lange et al., 2017; Hoffmann et al., 2018; Trappmann et al. 2010), which are provided as part of this package. 
+*Similarity-based Reasoning*
 
-Training the model will take several minutes ...
+This was easy. Schierholz (2019) introduces an alternative method, which yields far better results. His technique relies on anonymized training data from various surveys (Antoni et al., 2010; Rohrbach-Schmidt and Hall, 2013; Lange et al., 2017; Hoffmann et al., 2018; Trappmann et al. 2010), which are provided as part of this package. 
+
+Training the model will take several minutes...
 ``` r
 simBasedModelWordwise <- trainSimilarityBasedReasoning2(anonymized_data = surveyCountsWordwiseSimilarity,
                                                          num.allowed.codes = 1291,
@@ -114,7 +124,7 @@ To get started, run the example code in ``?predictLogisticRegressionWithPenaliza
 
 If you know the algorithm you want to use, look at the examples of the ``predict``-function for this algorithm (e.g., ``?predictXgboost``).
 
-Additional algorithms not mentioned in the paper are described in my dissertation at https://madoc.bib.uni-mannheim.de/50617/ The example code in ``?selectMaxProbMethod`` is a good start to see these algorithms at work. This function implements the ``Maximum Probability Algorithm`` (algorithm 10 in the dissertation).
+Additional algorithms not mentioned in the paper are described in my dissertation at https://madoc.bib.uni-mannheim.de/50617/ The example code in ``?selectMaxProbMethod`` is a good start to see these algorithms at work. This function implements the ``Maximum Probability Algorithm`` (algorithm 10 in the dissertation and just a different implementation of Similarity-based Reasoning as shown above).
 
 ## References
 
