@@ -172,7 +172,7 @@ The performance from ``Substring Similiarity`` and ``Wordwise Similiarity`` is e
 
 Small improvements are achieved when combining models, and the second strategy to do so accomplishes higher agreement rates. However, Schierholz (2019) reported an even higher agreement rate for the Maximum Probability algorithm. This is because he combined both with a third model, which has not been used here, because improvements are rather small.
 
-With the data provided here, the performance is nearly as good as the best algorithm reported by Schierholz and Schonlau (forthcoming). Privacy considerations hindered the provision of the best performing algorithm. Given the small gap between both, this appears bearable, as it is certainly worth to make the algorithms publicly available to the survey research community.
+With the data provided here, the performance is nearly as good as the best algorithm reported by Schierholz and Schonlau (forthcoming). Privacy considerations hindered the provision of the best performing algorithm. Given the small gap between both, this appears bearable, as it is certainly worth to make this approach publicly available to the survey research community.
 
 ## References
 
