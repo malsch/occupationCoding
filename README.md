@@ -20,7 +20,7 @@ Applied German users will also want to download the file ``Gesamtberufsliste_der
 
 ## Usage
 
-### For Applied Users (German only)
+### For Applied Users (German only, coding according to the 2010 German classification of occupation)
 
 Load the coding index ``Gesamtberufsliste_der_BA.xlsx`` first.
 ``` r
@@ -28,6 +28,7 @@ path_to_file <- "./Gesamtberufsliste_der_BA.xlsx" # change path
 try({coding_index_w_codes <- prepare_German_coding_index_Gesamtberufsliste_der_BA(path_to_file, 
                                   count.categories = FALSE)}, silent = TRUE)
 ```
+
 Consult the coding index. For typical survey data, there is an entry in the coding index for about ~45% of all answers. In rare cases, when the same job title is used in different industries, there is more than one entry in the processed coding index.
 ``` r
 text_input <- c("Bürokauffrau", "Stadtjugendpfleger", "Erzieherhelfer im Lehrlingswohnheim.", 
@@ -39,6 +40,36 @@ text_input <- c("Bürokauffrau", "Stadtjugendpfleger", "Erzieherhelfer im Lehrli
 ## 3:  3 Erzieherhelfer im Lehrlingswohnheim.      <NA>
 ## 4:  4   Mitarbeit bei einer Filmproduktion      <NA>
 ## 5:  5                          Abschleifer 24222,21212
+```
+
+This was easy. Schierholz (2019, pp. 206-208) suggests an alternative method, which yields far better results. His technique relies on training data from various surveys (Antoni et al., 2010; Rohrbach-Schmidt and Hall, 2013; Lange et al., 2017; Hoffmann et al., 2018; Trappmann et al. 2010) that are provided as part of this package. 
+
+Training the model (results are actually even better when we use two models) will take several minutes ...
+``` r
+simBasedModelSubstring <- trainSimilarityBasedReasoning2(anonymized_data = surveyCountsSubstringSimilarity,
+                                                         num.allowed.codes = 1291,
+                                                         coding_index_w_codes = coding_index_w_codes,
+                                                         preprocessing = list(stopwords = NULL, stemming = NULL, strPreprocessing = TRUE, removePunct = FALSE),
+                                                         dist.type = "substring",
+                                                         dist.control = NA,
+                                                         threshold = NA,
+                                                         simulation.control = list(n.draws = 250, check.normality = FALSE)
+                                                         )
+                                                         
+simBasedModelWordwise <- trainSimilarityBasedReasoning2(anonymized_data = surveyCountsWordwiseSimilarity,
+                                                         num.allowed.codes = 1291,
+                                                         coding_index_w_codes = coding_index_w_codes,
+                                                         preprocessing = list(stopwords = NULL, stemming = NULL, strPreprocessing = TRUE, removePunct = FALSE),
+                                                         dist.type = "wordwise",
+                                                         dist.control = list(method = "osa", weight = c(d = 1, i = 1, s = 1, t = 1)),
+                                                         threshold = c(max = NA, use = 1),
+                                                         simulation.control = list(n.draws = 250, check.normality = FALSE)
+)
+
+```
+
+``` r
+
 ```
 
 ### For Programmers
