@@ -12,8 +12,8 @@ Two groups of users will profit from this package:
 
 The easiest way to install this package.
 ``` r
-install.packages("devtools")
-devtools::install_github("malsch/occupationCoding")
+install.packages("remotes")
+remotes::install_github("malsch/occupationCoding")
 ```
 
 Applied German users will also want to download the file ``Gesamtberufsliste_der_BA.xlsx`` from https://download-portal.arbeitsagentur.de/ (requires free registration).
