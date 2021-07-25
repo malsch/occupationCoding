@@ -20,9 +20,11 @@
 
 #' 2010 German Classification of Occupations (KldB 2010)
 #'
-#' This file contains the labels for all 1286 five-digit categories (Berufsgattungen) from the 2010 German Classification of Occupations. Five additional categories were added for coding purposes: (-0030 = Studentische Hilfskraft, -0004 = Berufsbeschreibung zu unpräzise/nicht kodierbar, -0006 = Mehrere Jobs, -0012 = Arbeiter/in (nicht näher spezifiziert), -0019 = Freiwilligendienst, FSJ, Zivildienst)
+#' This file contains the labels for all 1286 five-digit categories (Berufsgattungen) from the 2010 German Classification of Occupations.
 #' 
-#' #' @format A data frame with 2 variables:
+#' Five additional categories were added for coding purposes: (-0030 = Studentische Hilfskraft, -0004 = Berufsbeschreibung zu unpräzise/nicht kodierbar, -0006 = Mehrere Jobs, -0012 = Arbeiter/in (nicht näher spezifiziert), -0019 = Freiwilligendienst, FSJ, Zivildienst)
+#' 
+#' @format A data frame with 2 variables:
 #' \describe{
 #'   \item{code}{5-digit number (Berufsgattung)}
 #'   \item{title}{Category label}

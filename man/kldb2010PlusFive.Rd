@@ -6,7 +6,11 @@
 \alias{kldb2010PlusFive}
 \title{2010 German Classification of Occupations (KldB 2010)}
 \format{
-An object of class \code{data.frame} with 1291 rows and 2 columns.
+A data frame with 2 variables:
+\describe{
+  \item{code}{5-digit number (Berufsgattung)}
+  \item{title}{Category label}
+}
 }
 \source{
 Federal Employment Agency (2011). Klassifikation der Berufe 2010, Bundesagentur für Arbeit, Nuremberg.
@@ -15,13 +19,9 @@ Federal Employment Agency (2011). Klassifikation der Berufe 2010, Bundesagentur 
 kldb2010PlusFive
 }
 \description{
-This file contains the labels for all 1286 five-digit categories (Berufsgattungen) from the 2010 German Classification of Occupations. Five additional categories were added for coding purposes: (-0030 = Studentische Hilfskraft, -0004 = Berufsbeschreibung zu unpräzise/nicht kodierbar, -0006 = Mehrere Jobs, -0012 = Arbeiter/in (nicht näher spezifiziert), -0019 = Freiwilligendienst, FSJ, Zivildienst)
+This file contains the labels for all 1286 five-digit categories (Berufsgattungen) from the 2010 German Classification of Occupations.
 }
 \details{
-#' @format A data frame with 2 variables:
-\describe{
-  \item{code}{5-digit number (Berufsgattung)}
-  \item{title}{Category label}
-}
+Five additional categories were added for coding purposes: (-0030 = Studentische Hilfskraft, -0004 = Berufsbeschreibung zu unpräzise/nicht kodierbar, -0006 = Mehrere Jobs, -0012 = Arbeiter/in (nicht näher spezifiziert), -0019 = Freiwilligendienst, FSJ, Zivildienst)
 }
 \keyword{datasets}
