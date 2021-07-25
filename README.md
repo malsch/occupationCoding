@@ -147,7 +147,7 @@ Here is a short example code to evaluate how well *Similarity-based Reasoning* w
 
 ``` r
 n <- 250 # number of observations
-proc.occupations <- removeFaultyAndUncodableAnswers_And_PrepareForAnalysis(occupations, colNames = c("orig_answer", "orig_code"), allowed.codes, allowed.codes.titles)
+proc.occupations <- removeFaultyAndUncodableAnswers_And_PrepareForAnalysis(occupations, colNames = c("orig_answer", "orig_code"), allowed.codes = kldb2010PlusFive$code, allowed.codes.titles = kldb2010PlusFive$title)
 
 # make predictions
 resWordwise2 <- expandPredictionResults(predictSimilarityBasedReasoning(simBasedModelWordwise, proc.occupations), allowed.codes = kldb2010PlusFive$code, method.name = "wordwiseSimilarityOsa1111")
