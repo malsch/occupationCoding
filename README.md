@@ -2,7 +2,7 @@
 
 This is an R package for occupation coding. It accompanies the following publication:
 
-Malte Schierholz, Matthias Schonlau (forthcoming): Machine Learning for Occupation Coding — a Comparison Study, Journal of Survey Statistics and Methodology, https://doi.org/10.1093/jssam/smaa023
+Malte Schierholz, Matthias Schonlau (2021): Machine Learning for Occupation Coding — a Comparison Study, Journal of Survey Statistics and Methodology 9(5), https://doi.org/10.1093/jssam/smaa023
 
 Two groups of users will profit from this package:
 - Applied users, who have German survey answers and want to run machine learning for automated occupation coding
