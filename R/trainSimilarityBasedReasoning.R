@@ -88,7 +88,7 @@ trainSimilarityBasedReasoning <- function(data,
   if (num.allowed.codes < 3) stop("Number of allowed codes is too low: ", num.allowed.codes)
   if (!(tmp_folder %in% list.dirs(full.names = FALSE))) stop ("Please make sure the following folder exists: ", tmp_folder)
   
-  if (is.na(threshold[1]) stop("threshold[1] is NA. Please enter a value (default: 3).")
+  if (is.na(threshold[1])) stop("threshold[1] is NA. Please enter a value (default: 3).")
 
   ####
   # Prepare coding index
