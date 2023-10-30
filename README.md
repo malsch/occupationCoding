@@ -135,7 +135,7 @@ head(resCombined[id == 1][order(pred.prob, decreasing = TRUE)], 10)
 
 Don't expect that this package will solve your problem without effort. You will probably need to do some programming to make this package suit your application.
 
-To get started, run the example code in ``?predictLogisticRegressionWithPenalization``. This function implements penalized multinomial logistic regression (algorithm 5 in the paper) and produces the kind of output you can get with this package. A fast way to train a classifier with your own data would be to follow the steps ``?predictGweonsNearestNeighbor``.
+To get started, run the example code in ``?predictLogisticRegressionWithPenalization``. This function implements penalized multinomial logistic regression (algorithm 5 in the paper) and produces the kind of output you can get with this package. A fast and reasonable way to train a classifier with your own data would be to follow the steps ``?predictGweonsNearestNeighbor``.
 
 If you know the algorithm you want to use, look at the examples of the ``predict``-function for this algorithm (e.g., ``?predictXgboost``).
 
