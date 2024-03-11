@@ -96,6 +96,7 @@ predictGweonsNearestNeighbor <- function(model, newdata, tuning = list(nearest.n
     ns <- nrow(X_ts)
 
     # cosine similarity
+    # RAM errors occur with large data. Probably at this place:
     similarity <- cosineSimilarity(X_ts, X_tr)
 
     # uncomment slow way of calculating cosine similarity
